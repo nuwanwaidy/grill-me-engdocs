@@ -1,0 +1,33 @@
+name: Sync governance-canonical.md from datahub
+
+# Triggered manually or when datahub repo publishes a new release
+# Future: trigger via repository_dispatch from the datahub CI/CD pipeline
+
+on:
+  workflow_dispatch:        # manual trigger for now
+  schedule:
+    - cron: '0 6 * * 1'    # weekly Monday 06:00 UTC as a safety net
+
+jobs:
+  sync-context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout grill-me repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download governance-canonical.md from datahub repo
+        run: |
+          curl -H "Authorization: token ${{ secrets.DATAHUB_REPO_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3.raw" \
+               -L "https://api.github.com/repos/madgicx/datahub/contents/_generated/governance-canonical.md" \
+               -o _context/governance-canonical.md
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _context/governance-canonical.md
+          git diff --staged --quiet || git commit -m "chore: sync governance-canonical.md from datahub [auto]"
+          git push
