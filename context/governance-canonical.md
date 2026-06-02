@@ -319,10 +319,10 @@ Workflows that carry TrustX responsibilities in addition to their value stream r
 ---
 
 ## Glossary
-<!-- Source: DataHub glossary_recipe.yml v0.2 -->
-
-13 nodes · ~80 canonical terms. Use these terms — not platform-specific equivalents —
-in all Madgicx documents, specs, and artefacts.
+<!-- Source: DataHub glossary_recipe.yml v0.4 — GitHub / datahub-facebook project -->
+<!-- 16 nodes · ~100 canonical terms                                               -->
+<!-- Use these terms in all Madgicx documents, specs, and artefacts                -->
+<!-- Nodes 14-16 added in v0.4: BusinessGoals · ValueStreams · Workflows           -->
 
 ### Node → Domain mapping
 
@@ -341,6 +341,11 @@ in all Madgicx documents, specs, and artefacts.
 | `Finance` | `finance_and_hr__finance` |
 | `HR` | `finance_and_hr__hr` |
 | `Operations` | `operations` |
+| `BusinessGoals` | `operations` |
+| `ValueStreams` | `operations` |
+| `Workflows` | `operations` |
+
+---
 
 ### AdPerformanceMetrics
 Core KPIs across Facebook Ads, Google Ads, TikTok Ads.
@@ -349,16 +354,18 @@ Core KPIs across Facebook Ads, Google Ads, TikTok Ads.
 |---|---|---|
 | `Impressions` | Total ad displays | — |
 | `Clicks` | Total ad clicks | — |
-| `Spend` | Total ad spend (account currency) | — |
-| `Reach` | Unique users who saw ad at least once | — |
-| `Frequency` | Avg times each user saw the ad | `impressions / reach` |
-| `CTR` | Click-through rate | `(clicks / impressions) * 100` |
-| `CPM` | Cost per 1,000 impressions | `(spend / impressions) * 1000` |
-| `CPC` | Cost per click | `spend / clicks` |
-| `ROAS` | Return on ad spend — **primary profitability metric** | `purchase_value / spend` |
-| `CPA` | Cost per acquisition | `spend / conversions` |
-| `QualityScore` | Google Ads quality diagnostic (1–10) | — |
-| `RelevanceScore` | Meta ad relevance diagnostic | ABOVE_AVERAGE · AVERAGE · BELOW_AVERAGE |
+| `Spend` | Total ad spend (account currency). Also: Cost, Ad Spend | — |
+| `Reach` | Unique users who saw ad at least once. Not available in Google Ads | — |
+| `Frequency` | Avg times each user saw the ad. High frequency → ad fatigue | `impressions / reach` |
+| `CTR` | Click-Through Rate. Indicates creative relevance and targeting quality | `(clicks / impressions) * 100` |
+| `CPM` | Cost per 1,000 impressions. Compares pricing efficiency across platforms | `(spend / impressions) * 1000` |
+| `CPC` | Cost per click. Compares traffic acquisition cost across campaigns | `spend / clicks` |
+| `ROAS` | Return on Ad Spend — **primary profitability metric at Madgicx** | `purchase_value / spend` |
+| `CPA` | Cost per Acquisition / Action / Result | `spend / conversions` |
+| `QualityScore` | Google Ads quality diagnostic (1–10). Higher → lower CPC, better position | — |
+| `RelevanceScore` | Meta ad relevance diagnostic | `ABOVE_AVERAGE · AVERAGE · BELOW_AVERAGE` |
+
+---
 
 ### ConversionMetrics
 Purchase events, leads, downstream revenue.
@@ -367,24 +374,28 @@ Purchase events, leads, downstream revenue.
 |---|---|---|
 | `Conversions` | Total desired actions post ad interaction | — |
 | `Purchases` | Completed purchase transactions attributed to ads | — |
-| `PurchaseValue` | Total revenue from purchase conversions | — |
-| `AOV` | Average order value | `purchase_value / purchases` |
-| `AddToCart` | Products added to cart after ad interaction | — |
-| `InitiateCheckout` | Checkout sessions started after ad interaction | — |
+| `PurchaseValue` | Total revenue from purchase conversions. Also: Conversion Value, Revenue | — |
+| `AOV` | Average Order Value. Key eCommerce health metric — impacts ROAS | `purchase_value / purchases` |
+| `AddToCart` | Mid-funnel intent. Products added to cart after ad interaction | — |
+| `InitiateCheckout` | Checkout sessions started. Between AddToCart and Purchase in funnel | — |
 | `Leads` | Lead form submissions after ad interaction | — |
-| `AttributionWindow` | Period in which conversion credits ad. Default: 7d click · 1d view | — |
-| `ViewThroughConversion` | Conversion from ad viewed but not clicked | — |
+| `AttributionWindow` | Period in which conversion credits an ad. Default: 7d click · 1d view. ⚠ Mismatched windows across platforms cause discrepancies | — |
+| `ViewThroughConversion` | Conversion from ad viewed but not clicked. Counted separately to avoid double-counting | — |
+
+---
 
 ### AudienceTargeting
 
 | Term | Definition |
 |---|---|
-| `CustomAudience` | First-party data audience (email lists, pixel visitors, CRM) |
-| `LookalikeAudience` | Algorithmically generated audience mirroring a source audience |
-| `RetargetingAudience` | Users who previously interacted with the brand |
-| `ProspectingAudience` | Cold audience — no prior brand interaction |
-| `AudienceOverlap` | % of users shared between audiences. High overlap → inflated CPMs |
+| `CustomAudience` | First-party data audience — email lists, pixel visitors, app users, CRM |
+| `LookalikeAudience` | Algorithmically mirrors a source audience. Facebook: 1%–10% of country population |
+| `RetargetingAudience` | Users who previously interacted with the brand. Lower-funnel, high intent |
+| `ProspectingAudience` | Cold audience — no prior brand interaction. Upper-funnel, new acquisition |
+| `AudienceOverlap` | % of users shared between audiences. High overlap → auction competition → inflated CPMs |
 | `KlaviyoSegment` | Dynamic/static Klaviyo contact list. Source for Facebook Custom Audiences |
+
+---
 
 ### CampaignStructure
 
@@ -392,36 +403,57 @@ Purchase events, leads, downstream revenue.
 **Google:** `GoogleAdAccount → GoogleCampaign → AdGroup → Ad/Keyword`
 **TikTok:** `Account → Campaign → Ad Group → Ad`
 
-Key terms: `CBO` (Campaign Budget Optimization — budget auto-distributed across ad sets) ·
-`PerformanceMax` (Google automated campaign across all inventory — replaced Smart Shopping 2022)
+| Term | Definition |
+|---|---|
+| `AdAccount` | Top-level Facebook container. Identified by `act_<account_id>` |
+| `Campaign` | Defines advertising objective (CONVERSIONS, REACH, TRAFFIC). Budget via CBO |
+| `AdSet` | Defines audience, placements, schedule, budget. Key targeting lever |
+| `Ad` | Leaf-level creative unit. Defines visual, copy, CTA, destination URL |
+| `CBO` | Campaign Budget Optimization — budget auto-distributed across ad sets by Meta algorithm |
+| `GoogleAdAccount` | Top-level Google Ads account. 10-digit customer ID. Can be under MCC |
+| `GoogleCampaign` | Defines campaign type (Search, Display, Shopping, Performance Max, Video) |
+| `AdGroup` | Below Campaign, above Ads/Keywords. Organises by theme or audience signals |
+| `PerformanceMax` | Google automated campaign across all inventory. Replaced Smart Shopping 2022 |
+
+---
 
 ### EcommerceShopify
 
 | Term | Definition | Formula |
 |---|---|---|
-| `ShopifyOrder` | Completed/pending transaction — primary revenue record | — |
-| `ShopifyProduct` | Sellable item. Used for product-level ROAS and ad catalog feeds | — |
-| `ShopifyCustomer` | Customer record. Used for audience building and CLV | — |
-| `CLV` | Customer lifetime value | `avg_order_value * purchase_frequency * customer_lifespan` |
-| `RefundRate` | % of orders refunded | `(refunded_orders / total_orders) * 100` |
+| `ShopifyOrder` | Completed/pending transaction — primary revenue record joined to ad attribution | — |
+| `ShopifyProduct` | Sellable item. Used for product-level ROAS and dynamic ad catalog feeds | — |
+| `ShopifyCustomer` | Customer record. Used for audience building (Klaviyo, Facebook) and CLV | — |
+| `CLV` | Customer Lifetime Value. Used to set target CPA bids and acquisition thresholds | `avg_order_value * purchase_frequency * customer_lifespan` |
+| `RefundRate` | % of orders refunded. High rate reduces true ROAS — Madgicx adjusts for net ROAS | `(refunded_orders / total_orders) * 100` |
 | `NewVsReturningCustomer` | First-time (NEW) vs repeat (RETURNING) buyer | `orders_count == 1 → NEW` |
 
+---
+
 ### EmailMarketing (Klaviyo)
+Klaviyo is treated as an eCommerce engagement channel — flows triggered by Shopify events,
+revenue attributed to purchase behaviour, segments built from purchase history.
 
 | Term | Definition |
 |---|---|
-| `EmailOpenRate` | % of delivered emails opened. ⚠ Inflated post iOS 15 MPP — use click rate |
-| `EmailClickRate` | % of delivered emails with at least one click. More reliable post-iOS 15 |
-| `KlaviyoFlow` | Automated email/SMS sequence triggered by Shopify event. Continuous revenue driver |
+| `EmailOpenRate` | % of delivered emails opened. ⚠ Inflated post Apple iOS 15 MPP — use click rate instead |
+| `EmailClickRate` | % of delivered emails with at least one click. More reliable signal post-iOS 15 |
+| `KlaviyoFlow` | Automated email/SMS triggered by Shopify event. Runs continuously. Key revenue driver |
 | `KlaviyoCampaign` | One-time broadcast email/SMS. 14-day click attribution default |
-| `EmailAttributedRevenue` | Revenue attributed to Klaviyo. ⚠ May double-count with Facebook/Google |
-| `ListGrowthRate` | Net subscriber growth rate | `((new - unsubscribes - bounces) / starting) * 100` |
+| `EmailAttributedRevenue` | Revenue attributed to Klaviyo. ⚠ May double-count with Facebook/Google — deduplicate via server-side order data |
+| `ListGrowthRate` | Net subscriber growth | `((new - unsubscribes - bounces) / starting) * 100` |
+
+---
 
 ### DataGovernance
 
 **Attribution models:**
-`LastClickAttribution` (single-touch) · `DataDrivenAttribution` (ML multi-touch — Google recommended) ·
-`MetaAttributedConversions` (⚠ subject to iOS 14.5+ signal loss — deduplicate via `event_id`)
+
+| Term | Definition |
+|---|---|
+| `LastClickAttribution` | 100% credit to last ad clicked. Simple but undervalues upper-funnel |
+| `DataDrivenAttribution` | ML multi-touch model. Distributes credit by observed contribution. Google recommended |
+| `MetaAttributedConversions` | Via Meta pixel, CAPI, or app SDK. ⚠ Subject to iOS 14.5+ signal loss. Deduplicate via `event_id` |
 
 **Ingestion health:**
 
@@ -430,17 +462,21 @@ Key terms: `CBO` (Campaign Budget Optimization — budget auto-distributed acros
 | `DataFreshness` | Time since last successful sync. SLAs: Facebook <3h · Google <3h · Shopify <1h · Klaviyo <6h |
 | `APIRateLimit` | Facebook: 200 score-based · Google: 15,000 ops/day · Shopify: 40 req/sec |
 | `DataGap` | Missing/incomplete data period. Severity: WARNING · CRITICAL. Remediation: backfill |
-| `ConversionDelay` | Facebook up to 72h delay. Madgicx uses 3-day buffer for stable ROAS |
+| `ConversionDelay` | Facebook up to 72h. Madgicx uses 3-day buffer for stable ROAS calculations |
+
+---
 
 ### SignalsAndAlerts
 
 | Term | Definition |
 |---|---|
-| `AlertSeverity` | INFO · WARNING · CRITICAL |
+| `AlertSeverity` | `INFO` (no action) · `WARNING` (monitor, manual review) · `CRITICAL` (immediate action, may trigger automation) |
 | `PerformanceThreshold` | Predefined boundary triggering an alert. Scope: campaign · adset · account · benchmark |
 | `AnomalySignal` | Statistical deviation from baseline — no explicit threshold needed |
 | `SLABreach` | Alert when data freshness or pipeline health SLA is violated |
-| `AdFatigue` | Creative shown too often → declining engagement + rising CPMs. Threshold: `frequency > 3.5 AND ctr_decline > 15%` |
+| `AdFatigue` | Creative overexposure → declining engagement + rising CPMs. Threshold: `frequency > 3.5 AND ctr_decline > 15%` |
+
+---
 
 ### ActivityLogs
 
@@ -448,49 +484,157 @@ Key terms: `CBO` (Campaign Budget Optimization — budget auto-distributed acros
 |---|---|---|
 | `AgentTrace` | Complete AI agent execution record via Langfuse | 90d hot · 1yr cold |
 | `ActionExecution` | Immutable record of every AI action against ad platform | Indefinite |
-| `CDCEvent` | Change Data Capture event from PRISM via Debezium | Per pipeline SLA |
+| `CDCEvent` | Change Data Capture event from PRISM via Debezium. Avro/JSON | Per pipeline SLA |
 | `SessionTrace` | User session record via FullStory. Pseudonymised | Per GDPR policy |
-| `RetentionTier` | HOT_90D · HOT_1Y · COLD_1Y · COLD_7Y · INDEFINITE | — |
+| `RetentionTier` | `HOT_90D` · `HOT_1Y` · `COLD_1Y` · `COLD_7Y` · `INDEFINITE` | — |
+
+---
 
 ### CreativeLibrary
 
 | Term | Definition |
 |---|---|
 | `CreativeAsset` | Single ad creative (VIDEO · IMAGE · CAROUSEL · COPY). Identified by asset URN |
-| `AssetLifecycleStatus` | DRAFT · ACTIVE · PAUSED · ARCHIVED · REJECTED |
+| `AssetLifecycleStatus` | `DRAFT` · `ACTIVE` · `PAUSED` · `ARCHIVED` · `REJECTED` |
 | `PerformanceScore` | Composite score: ROAS contribution + CTR lift + fatigue. Range: 0.0–10.0 |
 | `CreativeFatigue` | Engagement decline from overexposure. Triggers rotation signal to AI agent |
 | `ABTestAssignment` | Creative assignment to control/treatment variant under controlled traffic split |
 
+---
+
 ### Finance
-⚠ CONFIDENTIAL_RESTRICTED — Finance team and named executives only
+⚠ `CONFIDENTIAL_RESTRICTED` — Finance team and named executives only
 
 | Term | Definition | Formula |
 |---|---|---|
-| `MRR` | Monthly Recurring Revenue — primary SaaS health metric | `sum(active_subscription_monthly_value)` |
+| `MRR` | Monthly Recurring Revenue — primary SaaS top-line health metric | `sum(active_subscription_monthly_value)` |
 | `ARR` | Annual Recurring Revenue | `MRR * 12` |
-| `ChurnRate` | % of MRR lost in period | `(churned_mrr / starting_mrr) * 100` |
+| `ChurnRate` | % of MRR lost. Variants: logo_churn (count) · revenue_churn (MRR) | `(churned_mrr / starting_mrr) * 100` |
 | `CAC` | Customer Acquisition Cost | `total_sales_marketing_spend / new_customers_acquired` |
 | `LTV` | Customer Lifetime Value (SaaS) | `ARPU / churn_rate` |
-| `PaybackPeriod` | Months to recover CAC | `CAC / (ARPU * gross_margin)` |
+| `PaybackPeriod` | Months to recover CAC. Under 12 months = healthy B2B SaaS | `CAC / (ARPU * gross_margin)` |
 | `GrossMargin` | Revenue after COGS | `(revenue - cogs) / revenue * 100` |
 
-### HR
-⚠ CONFIDENTIAL_RESTRICTED — HR lead and C-suite only. Named-user grants.
+---
 
-`Headcount` · `SalaryBand` · `EquityGrant` · `OrganisationalStructure`
+### HR
+⚠ `CONFIDENTIAL_RESTRICTED` — HR lead and C-suite only. Named-user grants.
+
+| Term | Definition |
+|---|---|
+| `Headcount` | Total active employees. By department, location, employment type |
+| `SalaryBand` | Defined compensation range (min/max) for a role or level. Ensures pay equity |
+| `EquityGrant` | Options or RSUs. Tracked with grant date, cliff, vesting schedule, strike price |
+| `OrganisationalStructure` | Manager-report hierarchy. Used for access control inheritance and org analytics |
+
+---
 
 ### Operations
 
 | Term | Definition |
 |---|---|
-| `OKR` | Objectives and Key Results. Quarterly cadence — company · team · individual |
+| `OKR` | Objectives and Key Results. Quarterly — company · team · individual |
 | `SOP` | Standard Operating Procedure. Versioned, owner-assigned, review-cadenced |
 | `ExecutionTicket` | Discrete work item in ClickUp/Linear. Audit trail from initiative to delivery |
 | `Roadmap` | Time-bounded initiative sequence. Quarterly review aligned to OKR cycle |
-| `InitiativeLifecycle` | IDEATION → PLANNING → IN_PROGRESS → REVIEW → COMPLETED → ARCHIVED |
+| `InitiativeLifecycle` | `IDEATION → PLANNING → IN_PROGRESS → REVIEW → COMPLETED → ARCHIVED` |
 
 ---
+
+### BusinessGoals
+*(Added v0.4)* — The six strategic objectives that define whether something is worth
+building at Madgicx. Every initiative, brief, and data asset must connect to at least one.
+Equal weighting — top-3 ranking per workflow reflects relative fit, not absolute priority.
+
+| Term | Definition | Objective # | Key Signals |
+|---|---|---|---|
+| `OperationalEfficiency` | Right information · right people · right time. Reduces waste, accelerates workflows, maximises utilisation | 1 | manual_effort_reduction · decision_speed · bottleneck_elimination |
+| `ProcessOptimisation` | Continuously refine workflows via data-driven insights. Automate, standardise, create improvement cycles | 2 | scalability · automation_coverage · improvement_metrics |
+| `CustomerRetention` | Products users interact with daily that prove tangible ROI. Target: negative churn through account expansion | 3 | product_stickiness · roi_demonstration · churn_reduction |
+| `RevenueGrowth` | Expose data capabilities as value-add features. Enable upsell, pricing optimisation, premium-tier justification | 4 | upsell_triggers · conversion_rate · monetisable_capabilities |
+| `RiskMitigation` | Eliminate single-platform dependencies. Build adaptable architecture. Proactive feedback loops | 5 | platform_diversification · feedback_loops · architectural_flexibility |
+| `QualityOfService` | 24/7 reliable data, intelligence, and platform performance. QoS is where TrustX and CustomerX meet | 6 | uptime · data_accuracy · observability · blast_radius_reduction |
+
+**Objective → Value Stream relationships:**
+
+| Objective | Primary Value Streams |
+|---|---|
+| `OperationalEfficiency` | OperX |
+| `ProcessOptimisation` | CustomerX · OperX |
+| `CustomerRetention` | CustomerX |
+| `RevenueGrowth` | CustomerX |
+| `RiskMitigation` | OperX · TrustX |
+| `QualityOfService` | TrustX |
+
+---
+
+### ValueStreams
+*(Added v0.4)* — The three value streams through which Madgicx delivers value.
+Based on SAFe / Lean product thinking. CustomerX and OperX active; TrustX is the
+governed foundation both run on.
+
+| Term | Type | Status | Stakeholders | Primary Objectives | Contains |
+|---|---|---|---|---|---|
+| `CustomerX` | external | defined | Media buyers · agency operators · performance marketers | CustomerRetention · RevenueGrowth · ProcessOptimisation | 14 CustomerX workflows |
+| `OperX` | internal | emerging | Engineering · Product · Data · CS · Operations | OperationalEfficiency · ProcessOptimisation · RiskMitigation | engdocs (+ future workflows) |
+| `TrustX` | foundational | active | All — governs both CustomerX and OperX | QualityOfService · RiskMitigation | tracking · classification · activity (enforcement points) |
+
+**Inheritance model:**
+- Each workflow `inherits` from its value stream
+- Each value stream `inherits` from its primary objectives
+- TrustX `contains` workflows that carry cross-cutting enforcement responsibilities
+
+---
+
+### Workflows
+*(Added v0.4)* — Primary product workflows fulfilling Madgicx 2.0 software services.
+All 14 defined workflows belong to CustomerX. Three carry TrustX enforcement responsibilities.
+OperX workflows are emerging — `EngineeringDocumentation` is the first defined.
+
+| # | Term | ID | Value Stream | TrustX | Primary | Secondary | Tertiary | QoS |
+|---|---|---|---|---|---|---|---|---|
+| 1 | `Onboarding` | onboarding | CustomerX | | ProcessOptimisation | CustomerRetention | RevenueGrowth | |
+| 2 | `ChatWithData` | chatwdata | CustomerX | | ProcessOptimisation | OperationalEfficiency | RiskMitigation | critical |
+| 3 | `MakingAds` | makeads | CustomerX | | ProcessOptimisation | OperationalEfficiency | CustomerRetention | |
+| 4 | `AdQueueManagement` | adqueue | CustomerX | | ProcessOptimisation | OperationalEfficiency | CustomerRetention | |
+| 5 | `CreativeAnalysis` | creatives | CustomerX | | OperationalEfficiency | CustomerRetention | RevenueGrowth | |
+| 6 | `ScalingAndExpanding` | scaling | CustomerX | | RiskMitigation | OperationalEfficiency | RevenueGrowth | high |
+| 7 | `BudgetManagement` | budget | CustomerX | | ProcessOptimisation | RiskMitigation | CustomerRetention | critical |
+| 8 | `AICommenter` | commenter | CustomerX | | OperationalEfficiency | CustomerRetention | RevenueGrowth | |
+| 9 | `CreatingCampaigns` | campaigns | CustomerX | | ProcessOptimisation | RiskMitigation | RevenueGrowth | |
+| 10 | `Reporting` | reporting | CustomerX | | ProcessOptimisation | RiskMitigation | CustomerRetention | critical |
+| 11 | `TrackingAndAttribution` | tracking | CustomerX | ✓ | RiskMitigation | ProcessOptimisation | CustomerRetention | critical |
+| 12 | `DataClassification` | classification | CustomerX | ✓ | OperationalEfficiency | RiskMitigation | CustomerRetention | |
+| 13 | `AdAccountRestructuring` | restructuring | CustomerX | | RiskMitigation | CustomerRetention | RevenueGrowth | |
+| 14 | `ActivityLog` | activity | CustomerX | ✓ | ProcessOptimisation | OperationalEfficiency | RiskMitigation | |
+| — | `EngineeringDocumentation` | engdocs | OperX | | OperationalEfficiency | ProcessOptimisation | RiskMitigation | |
+
+> **TrustX ✓** — workflow carries a TrustX enforcement responsibility.
+> **QoS** — `critical` = financial or trust impact of failure is direct and immediate.
+
+**Workflow dependency map:**
+```
+makeads ◄──────── creatives        (classification insights feed ad creation)
+    │                  ▲
+    ▼                  │
+adqueue ──────────► campaigns      (classification labels inform campaign build)
+                       │
+creatives ─────────► scaling       (performance patterns drive scaling decisions)
+    │
+    ▼
+classification
+
+tracking ──────────► reporting
+    │
+    └──► (all workflows — broken tracking corrupts all downstream data)
+
+chatwdata ──────────► (all workflows — horizontal AI interface)
+activity ───────────► (all workflows — horizontal audit trail)
+onboarding ─────────► (entry point — feeds all workflows for new users)
+budget ─────────────► campaigns · scaling
+restructuring ──────► campaigns · budget
+commenter ──────────► creatives (comment insights feed creative strategy)
+```
 
 ## Tech Stack
 <!-- Source: tech-stack.yml v0.3 — GitHub / datahub-facebook project -->
