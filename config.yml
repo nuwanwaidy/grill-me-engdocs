@@ -1,0 +1,169 @@
+# =============================================================================
+# config.yml — Grill Me Mode Registry
+# Repository: github.com/nuwanwaidya/grill-me
+# Future:     github.com/madgicx/skills
+#
+# Single source of truth for all available grill-me modes.
+# SKILL.md reads this file to build the menu and route to the correct
+# sub-skill. SKILL.md never needs editing when adding a new mode.
+#
+# To add a new mode:
+#   1. Create the .md file in artefacts/<folder>/
+#   2. Add an entry here — done
+#
+# Artefact folder conventions:
+#   briefs/          Strategic documents for leadership sign-off
+#   features/        Concrete capabilities within an epic
+#   epics/           Large outcome-oriented roadmap initiatives
+#   stories/         User stories and tech stories (coming soon)
+#   investigations/  Spike and investigation documents (coming soon)
+#
+# Fields:
+#   id           Unique mode identifier
+#   menu_number  Position in the presented menu
+#   label        Display name in the menu
+#   description  One-line description of what the user gets
+#   triggers     Words/phrases the user might type to select this mode
+#   path         Path to sub-skill file, relative to repo root
+#   status       active | coming_soon
+#   folder       Artefact subfolder this mode belongs to
+# =============================================================================
+
+version: "0.2"
+context: "_context/governance-canonical.md"
+
+modes:
+
+  # ---------------------------------------------------------------------------
+  # BRIEFS — Strategic documents for leadership sign-off
+  # ---------------------------------------------------------------------------
+
+  - id: product-brief
+    menu_number: 1
+    label: "Product Brief"
+    description: "A concept note for leadership to accept/reject"
+    triggers:
+      - "1"
+      - "product brief"
+      - "brief"
+      - "concept note"
+    path: "artefacts/briefs/product-brief.md"
+    status: active
+    folder: briefs
+
+  - id: prd
+    menu_number: 2
+    label: "PRD"
+    description: "A Product Requirements Document for a full initiative"
+    triggers:
+      - "2"
+      - "prd"
+      - "product requirements"
+      - "product requirements document"
+    path: "artefacts/briefs/prd.md"
+    status: coming_soon
+    folder: briefs
+
+  # ---------------------------------------------------------------------------
+  # FEATURES — Concrete capabilities within an epic
+  # ---------------------------------------------------------------------------
+
+  - id: product-feature
+    menu_number: 3
+    label: "Product Feature"
+    description: "A full feature definition + functional specification (IEEE SRS-style)"
+    triggers:
+      - "6"
+      - "product feature"
+      - "feature"
+      - "feature spec"
+      - "feature definition"
+    path: "artefacts/features/product-feature.md"
+    status: active
+    folder: features
+
+  # ---------------------------------------------------------------------------
+  # EPICS — Large outcome-oriented roadmap initiatives
+  # ---------------------------------------------------------------------------
+
+  - id: epic
+    menu_number: 4
+    label: "Epic"
+    description: "A large outcome-oriented roadmap initiative spanning multiple sprints"
+    triggers:
+      - "5"
+      - "epic"
+    path: "artefacts/epics/epic.md"
+    status: active
+    folder: epics
+
+  # ---------------------------------------------------------------------------
+  # STORIES — User stories and tech stories (coming soon)
+  # ---------------------------------------------------------------------------
+
+  - id: user-story
+    menu_number: 7
+    label: "User Story"
+    description: "A user story scoped to a single user need within a feature"
+    triggers:
+      - "7"
+      - "user story"
+      - "story"
+    path: "artefacts/stories/user-story.md"
+    status: coming_soon
+    folder: stories
+
+  - id: tech-story
+    menu_number: 8
+    label: "Tech Story"
+    description: "A technical enabler story not directly tied to user value"
+    triggers:
+      - "8"
+      - "tech story"
+      - "technical story"
+      - "enabler"
+    path: "artefacts/stories/tech-story.md"
+    status: coming_soon
+    folder: stories
+
+  - id: release-note
+    menu_number: 10
+    label: "Release Note"
+    description: "A governed release note documenting what was delivered and why"
+    triggers:
+      - "3"
+      - "release note"
+      - "release"
+    path: "artefacts/briefs/release-note.md"
+    status: coming_soon
+    folder: briefs
+
+  - id: white-paper
+    menu_number: 5
+    label: "White-paper"
+    description: "A strategic or technical position document"
+    triggers:
+      - "4"
+      - "white-paper"
+      - "whitepaper"
+      - "position paper"
+    path: "artefacts/briefs/white-paper.md"
+    status: coming_soon
+    folder: briefs
+
+  # ---------------------------------------------------------------------------
+  # INVESTIGATIONS — Spikes and investigation documents (coming soon)
+  # ---------------------------------------------------------------------------
+
+  - id: investigation
+    menu_number: 9
+    label: "Investigation"
+    description: "A time-boxed spike to reduce uncertainty before committing to a solution"
+    triggers:
+      - "9"
+      - "investigation"
+      - "spike"
+      - "discovery"
+    path: "artefacts/investigations/investigation.md"
+    status: coming_soon
+    folder: investigations
