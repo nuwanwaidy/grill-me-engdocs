@@ -73,7 +73,7 @@ Correction loops are supported: upload a Feature into an Epic session
 
 ## How it works
 
-1. User types `/grill-me` in Claude
+1. User types `/grill-me-engdocs` in Claude
 2. Claude reads `SKILL.md` and `config.yml` — asks the review mode then presents the menu
 3. User selects a mode and optionally uploads a prior playbook for handoff context
 4. Claude reads the sub-skill from `playbooks/<folder>/default-*.md`
