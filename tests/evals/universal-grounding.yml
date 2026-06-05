@@ -1,0 +1,136 @@
+# =============================================================================
+# evals/universal-grounding.yml — Universal Grounding Contract
+# =============================================================================
+#
+# WHAT THIS EVAL TESTS:
+# Any artefact defined in config.yml must satisfy the universal grounding
+# contract. These evals run against every active artefact mode automatically.
+# Adding a new artefact to config.yml and dropping a file in artefacts/
+# does not require new eval files — this suite covers it.
+#
+# THE THREE UNIVERSAL BEHAVIOURS:
+#
+# 1. PROACTIVE GROUNDING (turn budget: 1)
+#    Given a plain English opening answer, the skill names a canonical
+#    Madgicx term (domain ID, system, value stream, objective) in its
+#    FIRST response — before the user introduces any canonical vocabulary.
+#    A skill that waits for the user to introduce canonical terms is not
+#    grounded — it is a transcriptionist.
+#
+# 2. DRILL ON VAGUE (turn budget: 3)
+#    Given a deliberately vague answer ("it improves efficiency"),
+#    the skill does not accept it and move on. It drills with a canonical
+#    signal question until a specific, grounded answer is reached.
+#    Confidence threshold: 0.95 within 3 turns.
+#
+# 3. HANDOFF PRE-POPULATION (turn budget: 1)
+#    Given an uploaded prior artefact with a ## Handoff block, the skill
+#    reads the block, announces which fields were pre-populated, and does
+#    not re-ask anchors already answered in the prior artefact.
+#
+# PERSONAS:
+#   vague-strategist — gives thin strategic answers, no canonical vocabulary
+#   technical-expert — precise systems, skips business rationale
+#   first-timer      — no Madgicx terminology at all
+#
+# TURN BUDGET:
+#   Behaviour 1: 1 turn  (proactive — must happen immediately)
+#   Behaviour 2: 3 turns (adaptive drilling)
+#   Behaviour 3: 1 turn  (handoff — session-start behaviour)
+#
+# CONFIDENCE THRESHOLD: 0.95
+# =============================================================================
+
+version: "0.1"
+eval_id: universal-grounding
+applies_to: all_active_artefacts   # runs against every mode in config.yml
+confidence_threshold: 0.95
+
+behaviours:
+
+  - id: UG-01
+    name: proactive-canonical-grounding
+    turn_budget: 1
+    description: >
+      Skill names a canonical Madgicx term in its first response without
+      the user introducing it. Valid terms: domain IDs, system names
+      (PRISM · θCortex · DataHub · AgentForge), value streams, BusinessGoals.*
+    personas: [vague-strategist, first-timer]
+    scoring_criteria:
+      - id: SC-01
+        name: canonical-term-named
+        threshold: 0.95
+        description: >
+          Did the skill name at least one canonical Madgicx term proactively?
+          Score 1.0 if named. Score 0.0 if not named in turn 1.
+      - id: SC-02
+        name: no-generic-question
+        threshold: 0.80
+        description: >
+          Did the skill ask a question grounded in Madgicx context rather than
+          a generic "what problem does this solve?" Score 1.0 if specific.
+          Score 0.0 if generic.
+
+  - id: UG-02
+    name: drill-on-vague-answer
+    turn_budget: 3
+    description: >
+      Skill does not accept vague answers. Given "it improves efficiency" or
+      "it aligns with our strategy", the skill drills with a canonical signal
+      question until a grounded answer is reached within 3 turns.
+    personas: [vague-strategist]
+    vague_inputs:
+      - "it improves efficiency"
+      - "it aligns with our strategy"
+      - "it adds business value"
+    scoring_criteria:
+      - id: SC-03
+        name: refused-vague-answer
+        threshold: 0.90
+        description: >
+          Did the skill push back on the vague answer rather than accepting
+          it and moving on? Score 1.0 if pushed back. Score 0.0 if accepted.
+      - id: SC-04
+        name: canonical-signal-question
+        threshold: 0.90
+        description: >
+          Did the skill use a canonical signal question to drill for evidence?
+          Score 1.0 if a signal question from governance-canonical was used.
+          Score 0.0 if no drilling question was asked.
+      - id: SC-05
+        name: no-invented-terms
+        threshold: 1.0
+        zero_tolerance: true
+        description: >
+          Did the skill use only canonical Madgicx terms? Score 0.0 if any
+          invented domain ID, system name, workflow ID, or objective name
+          appears. Score 1.0 if only canonical terms used.
+
+  - id: UG-03
+    name: handoff-pre-population
+    turn_budget: 1
+    description: >
+      When a prior artefact is uploaded, skill reads the ## Handoff block,
+      announces pre-populated fields, and skips already-answered anchors.
+    personas: [vague-strategist]
+    scoring_criteria:
+      - id: SC-06
+        name: handoff-acknowledged
+        threshold: 0.95
+        description: >
+          Did the skill acknowledge the uploaded artefact and list loaded fields?
+          Score 1.0 if artefact type named and fields listed.
+          Score 0.0 if upload was ignored.
+      - id: SC-07
+        name: anchors-not-re-asked
+        threshold: 0.90
+        description: >
+          Did the skill skip anchors already answered in the prior artefact?
+          Score 1.0 if all answered anchors skipped.
+          Score 0.0 if any were re-asked as open questions.
+      - id: SC-08
+        name: value-stream-consistent
+        threshold: 0.95
+        description: >
+          Is the value stream consistent with the prior artefact's Handoff block?
+          Score 1.0 if consistent. Score 0.0 if different or absent.

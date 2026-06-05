@@ -1,161 +1,246 @@
 # =============================================================================
 # config.yml — Grill Me Mode Registry
-# Repository: github.com/nuwanwaidya/grill-me
+# Repository: github.com/nuwanwaidya/grill-me-engdocs
 # Future:     github.com/madgicx/skills
+# Version:    0.4
 #
-# Single source of truth for all available grill-me modes.
+# Single source of truth for all available grill-me-engdocs modes.
 # SKILL.md reads this file to build the menu and route to the correct
 # sub-skill. SKILL.md never needs editing when adding a new mode.
 #
 # To add a new mode:
-#   1. Create the .md file in artefacts/<folder>/
+#   1. Create the .md file in playbooks/<folder>/
 #   2. Add an entry here — done
 #
-# Artefact folder conventions:
-#   briefs/          Strategic documents for leadership sign-off
-#   features/        Concrete capabilities within an epic
-#   epics/           Large outcome-oriented roadmap initiatives
-#   stories/         User stories and tech stories (coming soon)
-#   investigations/  Spike and investigation documents (coming soon)
+# Naming convention:
+#   All playbook files use default- prefix: default-brief.md, default-prd.md etc.
+#   Domain-specific variants follow the same pattern: data-prd.md, ai-brief.md etc.
+#
+# Playbook folder conventions:
+#   briefs/          Concept notes for leadership sign-off
+#   prd/             Product Requirements Documents (default + domain-specific)
+#   epics/           Grouped deliverable components for sprints
+#   features/        Concrete capabilities with functional spec
+#   stories/         User stories and tech stories
+#   investigations/  Spike and investigation documents
 #
 # Fields:
-#   id           Unique mode identifier
-#   menu_number  Position in the presented menu
-#   label        Display name in the menu
-#   description  One-line description of what the user gets
-#   triggers     Words/phrases the user might type to select this mode
-#   path         Path to sub-skill file, relative to repo root
-#   status       active | coming_soon
-#   folder       Artefact subfolder this mode belongs to
+#   id                   Unique mode identifier
+#   menu_number          Position in the presented menu
+#   label                Display name in the menu
+#   description          One-line description of what the user gets
+#   triggers             Words/phrases the user might type to select this mode
+#   path                 Path to sub-skill file, relative to repo root
+#   status               active | coming_soon
+#   folder               Playbook subfolder this mode belongs to
+#   lifecycle_stage      InitiativeLifecycle stage this playbook gates
+#   handoff_accepts      Prior playbook(s) this mode can receive as upload context
+#                        [] = first in chain, no prior playbook expected
+#   handoff_produces     Next playbook(s) this mode hands off to
+#   review_modes         guided | express | auto | review
+#   default_review_mode  Default if user doesn't specify
+#   rating_methods       rice | wiegers | moscow
+#   supports_upload      prior_playbook | rating_table
 # =============================================================================
 
-version: "0.2"
+version: "0.4"
 context: "_context/governance-canonical.md"
+playbooks_root: "playbooks"  # SSOT — change here to rename the folder
+review_mode_prompt: true
 
 modes:
 
   # ---------------------------------------------------------------------------
-  # BRIEFS — Strategic documents for leadership sign-off
+  # BRIEFS — Concept notes for leadership sign-off
   # ---------------------------------------------------------------------------
 
-  - id: product-brief
+  - id: default-brief
     menu_number: 1
-    label: "Product Brief"
-    description: "A concept note for leadership to accept/reject"
+    label: "Brief"
+    description: "A concept note for leadership to accept/reject — first gate of the initiative lifecycle"
     triggers:
       - "1"
-      - "product brief"
       - "brief"
       - "concept note"
-    path: "artefacts/briefs/product-brief.md"
+      - "product brief"
+      - "default brief"
+    path: "playbooks/briefs/default-brief.md"
     status: active
     folder: briefs
+    lifecycle_stage: IDEATION
+    handoff_accepts: []
+    handoff_produces: [default-prd]
+    review_modes: [guided, express, auto, review]
+    default_review_mode: guided
+    rating_methods: [wiegers]
+    supports_upload: [rating_table]
 
-  - id: prd
+  # ---------------------------------------------------------------------------
+  # PRD — Product Requirements Documents
+  # ---------------------------------------------------------------------------
+
+  - id: default-prd
     menu_number: 2
     label: "PRD"
-    description: "A Product Requirements Document for a full initiative"
+    description: "Use cases, process flows, and requirements bound to architecture — second gate"
     triggers:
       - "2"
       - "prd"
       - "product requirements"
-      - "product requirements document"
-    path: "artefacts/briefs/prd.md"
+      - "default prd"
+    path: "playbooks/prd/default-prd.md"
     status: coming_soon
-    folder: briefs
+    folder: prd
+    lifecycle_stage: PLANNING
+    handoff_accepts: [default-brief]
+    handoff_produces: [default-epic, default-feature]
+    review_modes: [guided, express, auto, review]
+    default_review_mode: guided
+    rating_methods: [rice, wiegers, moscow]
+    supports_upload: [prior_playbook, rating_table]
 
   # ---------------------------------------------------------------------------
-  # FEATURES — Concrete capabilities within an epic
+  # EPICS — Grouped deliverable components for sprints
   # ---------------------------------------------------------------------------
 
-  - id: product-feature
+  - id: default-epic
     menu_number: 3
-    label: "Product Feature"
-    description: "A full feature definition + functional specification (IEEE SRS-style)"
-    triggers:
-      - "6"
-      - "product feature"
-      - "feature"
-      - "feature spec"
-      - "feature definition"
-    path: "artefacts/features/product-feature.md"
-    status: active
-    folder: features
-
-  # ---------------------------------------------------------------------------
-  # EPICS — Large outcome-oriented roadmap initiatives
-  # ---------------------------------------------------------------------------
-
-  - id: epic
-    menu_number: 4
     label: "Epic"
-    description: "A large outcome-oriented roadmap initiative spanning multiple sprints"
+    description: "A large outcome-oriented initiative decomposed into deliverable sprint components"
     triggers:
-      - "5"
+      - "3"
       - "epic"
-    path: "artefacts/epics/epic.md"
+      - "default epic"
+    path: "playbooks/epics/default-epic.md"
     status: active
     folder: epics
+    lifecycle_stage: PLANNING
+    handoff_accepts: [default-prd, default-brief]
+    handoff_produces: [default-user-story, default-tech-story]
+    review_modes: [guided, express, auto, review]
+    default_review_mode: guided
+    rating_methods: [rice, wiegers, moscow]
+    supports_upload: [prior_playbook, rating_table]
 
   # ---------------------------------------------------------------------------
-  # STORIES — User stories and tech stories (coming soon)
+  # FEATURES — Concrete capabilities with functional spec
   # ---------------------------------------------------------------------------
 
-  - id: user-story
-    menu_number: 7
-    label: "User Story"
-    description: "A user story scoped to a single user need within a feature"
+  - id: default-feature
+    menu_number: 4
+    label: "Feature"
+    description: "A concrete capability with full functional specification (IEEE SRS-style)"
     triggers:
-      - "7"
+      - "4"
+      - "feature"
+      - "feature spec"
+      - "default feature"
+    path: "playbooks/features/default-feature.md"
+    status: active
+    folder: features
+    lifecycle_stage: PLANNING
+    handoff_accepts: [default-prd, default-brief]
+    handoff_produces: [default-epic, default-user-story]
+    review_modes: [guided, express, auto, review]
+    default_review_mode: guided
+    rating_methods: [rice, wiegers]
+    supports_upload: [prior_playbook, rating_table]
+
+  # ---------------------------------------------------------------------------
+  # STORIES — User stories and tech stories
+  # ---------------------------------------------------------------------------
+
+  - id: default-user-story
+    menu_number: 5
+    label: "User Story"
+    description: "A user story scoped to a single user need within a feature or epic"
+    triggers:
+      - "5"
       - "user story"
       - "story"
-    path: "artefacts/stories/user-story.md"
+      - "default user story"
+    path: "playbooks/stories/default-user-story.md"
     status: coming_soon
     folder: stories
+    lifecycle_stage: IN_PROGRESS
+    handoff_accepts: [default-feature, default-epic]
+    handoff_produces: [default-release-note]
+    review_modes: [guided, express, auto, review]
+    default_review_mode: guided
+    rating_methods: [rice]
+    supports_upload: [prior_playbook, rating_table]
 
-  - id: tech-story
-    menu_number: 8
+  - id: default-tech-story
+    menu_number: 6
     label: "Tech Story"
-    description: "A technical enabler story not directly tied to user value"
+    description: "A technical enabler story — infrastructure, refactoring, or platform work"
     triggers:
-      - "8"
+      - "6"
       - "tech story"
       - "technical story"
       - "enabler"
-    path: "artefacts/stories/tech-story.md"
+      - "default tech story"
+    path: "playbooks/stories/default-tech-story.md"
     status: coming_soon
     folder: stories
+    lifecycle_stage: IN_PROGRESS
+    handoff_accepts: [default-feature, default-epic]
+    handoff_produces: [default-release-note]
+    review_modes: [guided, express, auto, review]
+    default_review_mode: guided
+    rating_methods: [rice]
+    supports_upload: [prior_playbook, rating_table]
 
-  - id: release-note
-    menu_number: 10
+  # ---------------------------------------------------------------------------
+  # RELEASE NOTES & WHITE-PAPERS
+  # ---------------------------------------------------------------------------
+
+  - id: default-release-note
+    menu_number: 7
     label: "Release Note"
     description: "A governed release note documenting what was delivered and why"
     triggers:
-      - "3"
+      - "7"
       - "release note"
       - "release"
-    path: "artefacts/briefs/release-note.md"
+      - "default release note"
+    path: "playbooks/briefs/default-release-note.md"
     status: coming_soon
     folder: briefs
+    lifecycle_stage: REVIEW
+    handoff_accepts: [default-user-story, default-tech-story, default-feature]
+    handoff_produces: [default-white-paper]
+    review_modes: [guided, express, auto, review]
+    default_review_mode: guided
+    rating_methods: []
+    supports_upload: [prior_playbook]
 
-  - id: white-paper
-    menu_number: 5
+  - id: default-white-paper
+    menu_number: 8
     label: "White-paper"
-    description: "A strategic or technical position document"
+    description: "A strategic or technical position document assembled from completed playbooks"
     triggers:
-      - "4"
+      - "8"
       - "white-paper"
       - "whitepaper"
       - "position paper"
-    path: "artefacts/briefs/white-paper.md"
+      - "default white paper"
+    path: "playbooks/briefs/default-white-paper.md"
     status: coming_soon
     folder: briefs
+    lifecycle_stage: COMPLETED
+    handoff_accepts: [default-release-note, default-prd]
+    handoff_produces: []
+    review_modes: [guided, express, auto, review]
+    default_review_mode: guided
+    rating_methods: []
+    supports_upload: [prior_playbook]
 
   # ---------------------------------------------------------------------------
-  # INVESTIGATIONS — Spikes and investigation documents (coming soon)
+  # INVESTIGATIONS
   # ---------------------------------------------------------------------------
 
-  - id: investigation
+  - id: default-investigation
     menu_number: 9
     label: "Investigation"
     description: "A time-boxed spike to reduce uncertainty before committing to a solution"
@@ -164,6 +249,14 @@ modes:
       - "investigation"
       - "spike"
       - "discovery"
-    path: "artefacts/investigations/investigation.md"
+      - "default investigation"
+    path: "playbooks/investigations/default-investigation.md"
     status: coming_soon
     folder: investigations
+    lifecycle_stage: IDEATION
+    handoff_accepts: [default-brief, default-prd]
+    handoff_produces: [default-prd, default-feature]
+    review_modes: [guided, express, auto, review]
+    default_review_mode: guided
+    rating_methods: [wiegers]
+    supports_upload: [prior_playbook, rating_table]

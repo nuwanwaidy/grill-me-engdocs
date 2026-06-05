@@ -1,0 +1,25 @@
+# governance-canonical.md is generated via CI/CD from github.com/madgicx/datahub
+# It is committed here as a convenience snapshot but should never be edited manually.
+# The authoritative source is the datahub repository.
+
+# Environment variables — never commit
+.env
+.env.local
+.env.*
+
+# Node
+tests/node_modules/
+tests/dist/
+
+# Eval results — tracked via Langfuse, not git
+tests/results/*.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
