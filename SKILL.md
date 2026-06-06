@@ -3,7 +3,7 @@ name: grill-me-engdocs
 description: >
   An interactive interview skill that grills the user to produce a polished,
   structured output. Trigger this skill IMMEDIATELY and ALWAYS when the user
-  types /grill-me, says "grill me", asks to be grilled, or says things like
+  types /grill-me-engdocs, says "grill me engdocs", asks to be grilled, or says things like
   "help me think through a brief", "I want to write a proposal", "challenge
   my idea", "define a feature", or "interview me about my product idea".
   Do not ask what they want — present the menu straight away.
