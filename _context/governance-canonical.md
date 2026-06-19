@@ -1,7 +1,7 @@
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 <!-- Source: madgicx/datahub config/ directory -->
-<!-- Generated: 2026-06-19 04:16 UTC -->
-<!-- Commit: b3383cb71c6140dafb80c81993d072d0361dd09c -->
+<!-- Generated: 2026-06-19 05:25 UTC -->
+<!-- Commit: 1266f7254a31e6ce4dd66bcc5150a7d51f32c770 -->
 <!-- Glossary: v0.3 | Domains: v0.3 -->
 
 # Madgicx Governance Canonical
@@ -16,6 +16,35 @@ Generated deterministically from:
 - `config/pipelines/assets.yaml`
 - `config/tags/technical_tags.yaml`
 - `config/tags/policy_tags.yaml`
+
+
+## AI & Data Vision
+
+> Empower social media marketers with trusted AI and data intelligence that improves advertising performance, accelerates decisions, and drives measurable business growth. This vision is inclusive of both external users (CustomerX) and internal teams (OperX). TrustX is the governed AI and Data foundation that makes both possible — invisible when working well, catastrophic when absent.
+
+*Covers: CustomerX, OperX, TrustX*
+
+### Strategic Delivery Model
+Scaled Agile Framework (SAFe) value stream thinking is the strategic delivery model for Madgicx. SAFe value streams define the sequence of steps that deliver value to a specific stakeholder. Three distinct value streams — CustomerX, OperX, TrustX — and six associated business goals drive the platform vision. SAFe thinking enables Madgicx to deliver the right value faster, with fewer delays, better quality, and clearer business accountability.
+
+*Principle: right value faster fewer delays better quality clearer accountability*
+
+### Capability Areas — The 3 As
+Three capability areas — the 3 As — that value streams inherit as a combination of Activation, Awareness, and Adaptive capabilities. Activation: capabilities that directly execute value for the user — actions, automations, and interventions. Awareness: capabilities that surface insights, signals, an
+
+- **Activation:** direct execution actions automations interventions
+- **Awareness:** insights signals intelligence dashboards alerts recommendations
+- **Adaptive:** ml models feedback loops continuous optimisation
+
+### Stakeholder Alignment Matrix
+
+| Value Stream | Stakeholders | Business Goals |
+|---|---|---|
+| CustomerX | media buyers, agency operators, performance marketers | CustomerRetention, RevenueGrowth, ProcessOptimisation |
+| OperX | engineering, product, data, customer success, operations | OperationalEfficiency, ProcessOptimisation, RiskMitigation |
+| TrustX | all | QualityOfService, RiskMitigation |
+
+> **Gate rule:** every brief must declare value stream and stakeholder group.
 
 
 ## Architecture Rules
@@ -733,6 +762,14 @@ The CustomerX Feature Store — curated ML-ready feature sets serving low-latenc
 - `DataWarehouseArchitecture.CustomerXFeatureStore.AccountPerformanceFeatures` — Feature set: account-level performance signals for churn prediction and bid optimisation models. Covers rolling 7d/30d/9…
 - `DataWarehouseArchitecture.CustomerXFeatureStore.CreativeFatigueFeatures` — Feature set: creative-level fatigue signals for the fatigue scoring model. Covers frequency progression, CTR decay rate …
 
+
+### AIDataVision
+The AI and Data vision, value stream framework, and capability architecture for the Madgicx platform. This node is the strategic anchor — every initiative, data asset, and platform capability must con…
+
+- `AIDataVision.PlatformVision` — Empower social media marketers with trusted AI and data intelligence that improves advertising performance, accelerates …
+- `AIDataVision.SAFeFramework` — Scaled Agile Framework (SAFe) value stream thinking is the strategic delivery model for Madgicx. SAFe value streams defi…
+- `AIDataVision.CapabilityAreas` — Three capability areas — the 3 As — that value streams inherit as a combination of Activation, Awareness, and Adaptive c…
+- `AIDataVision.StakeholderAlignment` — The stakeholder alignment matrix maps each value stream to its primary stakeholder group and the business goals that gov…
 
 
 ## Asset Registry
