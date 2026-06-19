@@ -1,767 +1,799 @@
-# governance-canonical.md — Madgicx Governing Context
-<!-- ==========================================================================
-     Source:       GitHub / datahub-facebook project (yml source files)
-     Version:      0.2
-     Generated:    May 2026
-     Owner:        AI & Data Strategy / devx-data
-     Pipeline:     CI/CD — auto-generated from DataHub yml source files.
-                   Do NOT edit manually. Edit source files in the
-                   datahub-facebook GitHub repository and trigger CI/CD
-                   to regenerate this file.
+<!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
+<!-- Source: madgicx/datahub config/ directory -->
+<!-- Generated: 2026-06-19 02:33 UTC -->
+<!-- Commit: 5613cfc686209cdeda5126508f905867a8334994 -->
+<!-- Glossary: v0.7 | Domains: v0.7 -->
 
-     Usage by skills:
-       Load this single file to ground any skill output in canonical Madgicx
-       terminology, strategy, and architecture. One file — always current —
-       always canonical.
+# Madgicx Governance Canonical
 
-       Skills that use this file:
-         - grill-me — product briefs, PRDs, epics, release notes, white-papers,
-           and any artefact generated through a structured design process
-         - Any AgentForge agent or skill.md requiring Madgicx context
-     ========================================================================== -->
+This document is the single grounding context for `grill-me-engdocs`.
+Every initiative brief, epic, feature spec, and PRD must align to the
+terminology, value streams, and architecture documented here.
 
----
+Generated deterministically from:
+- `config/glossary/glossary.yaml` (v0.7)
+- `config/domains/domains.yaml` (v0.7)
+- `config/pipelines/assets.yaml`
+- `config/tags/technical_tags.yaml`
+- `config/tags/policy_tags.yaml`
 
-## Vision
 
-> "Empowering every person at Madgicx and our users to unlock their full potential
-> by transforming data into a trusted strategic asset — seamlessly delivering
-> AI-powered intelligence and operational excellence that amplifies the quality
-> of experience for all."
+## Architecture Rules
 
-*Note: This vision is intentionally inclusive of both external users (CustomerX)
-and internal teams (OperX). Trusted AI & Data (TrustX) is the governed foundation
-that makes both possible.*
+These rules are invariants. Violation is a hard stop in any review.
 
----
+1. `CustomerX`, `OperX`, `TrustX` are **value stream labels only** — they never
+   appear in BigQuery dataset names or table names.
+2. `assets.yaml` contains only real, confirmed BigQuery tables. No placeholders.
+3. **L0 raw is excluded from governed scope.** Lineage starts at L1.
+   All L1 tables carry `upstream_urns: []`.
+4. All transformations L0→L3 are executed via **Temporal sagas** (PRISM Fetcher).
+   No dbt references anywhere in the platform.
+5. All tag names must be verified against `technical_tags.yaml` and `policy_tags.yaml`
+   before use. Unknown tags are a validation error.
+6. All glossary term references must use dot-notation paths verified against
+   `glossary.yaml` (e.g. `DataSources.MetaAdsAPI`, `Workflows.BudgetManagement`).
+7. **DataHub storage tiers:** L1 Standardised (GCS), L2 Normalised/Hive-partitioned
+   (GCS), L3 Certified (BigQuery).
+8. Temporal is **excluded from DataHub emission** — PRISM sagas write rows to
+   BigQuery only.
+9. TrustX is not a value stream beside the others — it is the governed base that
+   CustomerX and OperX both run on.
+10. `grill-me-engdocs` docs must reference at least one `BusinessGoals` term,
+    one `ValueStreams` term, and one `Workflows` term per initiative.
 
-## Business Objectives
 
-Six objectives define whether something is worth building at Madgicx.
-Every initiative — whether CustomerX, OperX, or TrustX — must connect clearly
-to at least one. Equal weighting — no objective outranks another. Top-3 ranking
-per workflow and brief reflects relative fit, not absolute priority.
+## Platform Capabilities
 
-### 1. Operational Efficiency
-Ensure the right information reaches the right people at the right time — reducing
-waste, accelerating workflows, and maximising resource utilisation across all teams
-and users.
+Reference PLAT-CAP IDs in initiative briefs when a capability is in scope.
 
-> Signal: Does this reduce manual effort, eliminate a bottleneck, or give people
-> better context to decide faster?
+### Orchestration
 
-### 2. Process Optimisation
-Continuously refine workflows via data-driven insights — automating repetitive tasks,
-standardising best practices, and creating improvement cycles informed by metrics and
-feedback from both internal teams and external users.
+- **PLAT-CAP-01 AgentForge** ⚑ TrustX — PLAT-CAP-01. Multi-step AI agent orchestration — sequencing, memory, and compound workflows. The runtime that executes θCortex AI agents. Manages prom…
+- **PLAT-CAP-02 TemporalOrchestration** — PLAT-CAP-02. Durable workflow execution — long-running, retryable, stateful process pipelines. Powers PRISM sagas (L0→L3 ingestion workflows). Handles…
+- **PLAT-CAP-03 KongAPIGateway** — PLAT-CAP-03. API traffic management, authentication, and rate limiting between Madgicx services and external providers. Enforces per-service rate limi…
+- **PLAT-CAP-04 MCPTool** — PLAT-CAP-04. Model Context Protocol tool. Connects Claude to live Madgicx or third-party data at runtime during agent execution. Enables agents to rea…
+- **PLAT-CAP-05 Fetcher** — PLAT-CAP-05. Structured ingestion framework implementing the L0→L3 pipeline — raw API landing through domain-modelled certified output. Each source ha…
+- **PLAT-CAP-06 ActionExecutor** ⚑ TrustX — PLAT-CAP-06. Carries out approved ad actions — pauses, budget changes, bid adjustments, and launches — against the ad platform API with a full audit t…
+- **PLAT-CAP-07 DataFabric** — PLAT-CAP-07. Semantic integration layer wiring data sources to governed domain outputs. Implemented via DataHub as the metadata and lineage backbone —…
+- **PLAT-CAP-08 CDC** — PLAT-CAP-08. Real-time row-level change streaming from operational databases via Debezium. Captures inserts, updates, and deletes as structured Avro e…
+- **PLAT-CAP-09 ReverseETL** — PLAT-CAP-09. Syncs warehouse outputs back to operational tools — CRM, ad platforms, and support systems. Enables warehouse- derived segments and score…
 
-> Signal: Does this create a more scalable, repeatable process or replace a manual
-> step with a governed, automated one?
+### AIIntelligence
 
-### 3. Customer Retention
-Build products — both external-facing and internal — that people interact with daily,
-that fit their workflows, and that deliver measurable value. For external users: proven
-ROI and negative churn. For internal teams: indispensable tools that raise delivery
-quality and consistency.
+- **PLAT-CAP-10 AICopilot** — PLAT-CAP-10. User-facing conversational AI — natural language query and recommendation. The CustomerX Chat with Data workflow surface. Powered by Clau…
+- **PLAT-CAP-11 ClaudeSkills** — PLAT-CAP-11. Structured prompt playbooks — documentation and structured output generation. Skills encode governance rules, output formats, and domain …
+- **PLAT-CAP-12 PredictiveModels** — PLAT-CAP-12. Trained predictive and classification models. Covers fatigue scoring, churn prediction, bid optimisation, and signal detection. Consume f…
+- **PLAT-CAP-13 PrescriptiveModels** — PLAT-CAP-13. Optimisation models that recommend or autonomously execute the best next action — budget reallocation, bid adjustment, audience expansion…
+- **PLAT-CAP-14 DescriptiveModels** — PLAT-CAP-14. Summarise what has happened — aggregating performance history, spend patterns, and engagement trends into interpretable metrics and basel…
+- **PLAT-CAP-15 DiagnosticModels** — PLAT-CAP-15. Identify why something happened — root cause analysis, anomaly attribution, and correlation detection across campaign, creative, audience…
+- **PLAT-CAP-16 LangfuseTracing** ⚑ TrustX — PLAT-CAP-16. AI observability — traces, evaluations, latency, and quality monitoring per agent run. Every AgentForge execution produces a Langfuse tra…
 
-> Signal: Does this make the product stickier, help users prove value, or reduce
-> friction at a known drop-off point?
+### DataStorage
 
-### 4. Revenue Growth
-Expose data capabilities and AI tools as value-add features that hook external users
-into the paid ecosystem. Enable upsell identification, pricing optimisation, and
-premium-tier justification through data-driven capabilities.
+- **PLAT-CAP-17 DataWarehouse** — PLAT-CAP-17. Central historical store in BigQuery — ML training, trend analysis, and heavy aggregation. Holds L3-certified, partitioned, clustered dat…
+- **PLAT-CAP-18 DataMart** — PLAT-CAP-18. Subdomain-scoped query-optimised store for reporting, dashboards, and analytical steps. Implemented as BigQuery materialised views or pur…
+- **PLAT-CAP-19 FeatureStore** — PLAT-CAP-19. Curated ML-ready feature sets — serves low-latency features to models at inference time and point-in-time correct features for training. …
+- **PLAT-CAP-20 SemanticLayer** — PLAT-CAP-20. Consistent business metric definitions across all consumers — single authoritative definition of ROAS, MRR, CAC, and all other KPIs. Prev…
 
-> Signal: Does this create a monetisable capability, support trial-to-paid conversion,
-> or enable a data-driven pricing decision?
+### Governance
 
-### 5. Risk Mitigation
-Eliminate single-platform dependencies, build adaptable architecture, and maintain
-feedback loops that surface industry trends, user needs, and emerging risks proactively
-— for both the product and internal operations.
+- **PLAT-CAP-21 DataHubGovernance** — PLAT-CAP-21. Metadata catalogue, lineage, ownership, and policy enforcement. DataHub OSS 0.13.1 is the governance backbone — every dataset, glossary t…
+- **PLAT-CAP-22 DataQualityEngine** — PLAT-CAP-22. Automated schema, freshness, and anomaly checks on pipeline outputs. Runs after each L2→L3 promotion step. Checks: schema drift, null rat…
+- **PLAT-CAP-23 PolicyTagEnforcement** — PLAT-CAP-23. Runtime access control tied to DataHub policy tag classifications. Sensitivity and PII tags applied in DataHub propagate to BigQuery IAM …
 
-> Signal: Does this reduce platform/vendor/person dependency, add an earlier feedback
-> loop, or increase architectural flexibility?
+### Serving
 
-### 6. Quality of Service
-Consistent, reliable data, intelligence, and platform performance — 24/7. Covers system
-uptime, data accuracy, algorithmic reliability, and platform responsiveness at every
-touchpoint — for external users and internal teams equally.
+- **PLAT-CAP-24 SupersetAnalytics** — PLAT-CAP-24. Self-serve BI, dashboards, and alert threshold configuration via Apache Superset. Consumes from the Data Mart layer. Internal-facing — us…
+- **PLAT-CAP-25 FEWidget** — PLAT-CAP-25. Frontend UI component that surfaces data or triggers a user-confirm action within the Madgicx product. Consumes from the Data API or dire…
+- **PLAT-CAP-26 DataAPI** — PLAT-CAP-26. Programmatic access layer exposing domain data as versioned REST or GraphQL endpoints. Consumed by FE widgets, third-party integrations, …
+- **PLAT-CAP-27 AlertingAndNotification** — PLAT-CAP-27. Threshold-based and anomaly-driven alerts delivered to users or downstream systems. Consumes signals from the SignalsAndAlerts domain. Ro…
+- **PLAT-CAP-28 Omnichannel** — PLAT-CAP-28. Unified delivery of alerts, insights, and recommendations across all customer touchpoints — in-app, email, SMS, and ad platform notificat…
 
-> Signal: Does this improve reliability, accuracy, or latency of something users
-> depend on — or reduce the blast radius of a failure?
 
----
+## Data Warehouse Architecture
+
+BigQuery dataset naming: `<value_stream>_<layer>`. All three value streams have a warehouse dataset.
+
+### CustomerXWarehouse
+The CustomerX value stream warehouse — the primary analytical store for all external-facing product data. Contains all ad performance, ecommerce, creative, audience, attribution, and signals data used by the 14 CustomerX workflows. Segmented into sub…
+
+- **AccountIntelligence** (`customerx_warehouse.account_intelligence`) — Subdomain: account-level intelligence combining static and dynamic data. Static layer: account details, industry classif…
+- **AudienceInsights** (`customerx_warehouse.audience_insights`) — Subdomain: audience composition, overlap, and performance data. Covers custom audience sizes, lookalike similarity distr…
+- **AlertsAndAnomalies** (`customerx_warehouse.alerts_and_anomalies`) — Subdomain: alert history and anomaly detection outputs. Stores threshold breach events, anomaly signals, SLA breach reco…
+- **ActivityInsights** (`customerx_warehouse.activity_insights`) — Subdomain: user and platform activity analytics derived from the Madgicx Activity Logs source. Covers feature adoption, …
+- **BudgetAndPacing** (`customerx_warehouse.budget_and_pacing`) — Subdomain: budget allocation, daily pacing, and spend velocity data. Tracks budget utilisation rates, pacing deviation f…
+- **AttributionAndConversion** (`customerx_warehouse.attribution_and_conversion`) — Subdomain: conversion attribution data across all platforms and models. Holds click-through and view-through conversion …
+- **CompetitorIntelligence** (`customerx_warehouse.competitor_intelligence`) — Subdomain: competitive intelligence derived from the Madgicx Auxiliary Ad Data source. Covers competitor ad creative ana…
+- **WebAppAnalytics** (`customerx_warehouse.web_app_analytics`) — Subdomain: website and app user behaviour data from GA4 BigQuery export. Covers session events, traffic sources, user en…
+- **ProductCatalogAndInventory** (`customerx_warehouse.product_catalog_and_inventory`) — Subdomain: Shopify product catalogue and inventory data. Covers product IDs, titles, variants, pricing, inventory levels…
+- **FirmographicAndIntent** (`customerx_warehouse.firmographic_technographic_intent`) — Subdomain: firmographic, technographic, and intent signal data enriching ad account and customer profiles. Covers indust…
+- **Metadata** (`customerx_warehouse.metadata`) — Subdomain: platform metadata and configuration reference data. Covers DataHub entity metadata snapshots, pipeline config…
+- **ABTestingAndExperiments** (`customerx_warehouse.ab_testing_and_experiments`) — Subdomain: A/B test assignment, variant performance, and experiment result data. Covers test configurations, traffic spl…
+- **ExternalFactors** (`customerx_warehouse.external_factors`) — Subdomain: external market signals that contextualise ad performance — seasonality indices, public holidays by market, e…
+- **CustomerCRMAndRevenue** (`customerx_warehouse.customer_crm_and_revenue`) — Subdomain: customer identity, purchase history, and revenue data combining Shopify customer records, Klaviyo engagement …
+
+### OperXWarehouse
+The OperX value stream warehouse — holds internal operational and engineering data supporting Madgicx teams. Covers engineering documentation metadata, execution ticket analytics, OKR tracking data, and OperX workflow outputs. Smaller in volume than …
+
+- **EngineeringOps** (`operx_warehouse.engineering_ops`) — Subdomain: engineering operations data — documentation metadata, code review patterns, deployment frequency, and inciden…
+
+### TrustXWarehouse
+The TrustX value stream warehouse — holds governance, quality, observability, and compliance data. Not customer-facing ad performance data. Covers Data Quality Engine outputs, OTEL traces, CDC event archives, pipeline performance metrics, audit trail…
+
+- **DataQualityResults** (`trustx_warehouse.data_quality_results`) — Subdomain: outputs from the Data Quality Engine (PLAT-CAP-22). Stores per-pipeline DQ check results — schema validation …
+- **PipelinePerformance** (`trustx_warehouse.pipeline_performance`) — Subdomain: ingestion pipeline health and performance metrics. Covers Temporal workflow execution times, Fetcher run dura…
+- **AuditAndCompliance** (`trustx_warehouse.audit_and_compliance`) — Subdomain: immutable audit trail records for compliance and governance reporting. Covers ad action execution records (in…
+- **OTELTraces** (`trustx_warehouse.otel_traces`) — Subdomain: OpenTelemetry infrastructure traces covering service latency, error rates, and distributed tracing across the…
+
+### CustomerXMart
+The CustomerX Data Mart — subdomain-scoped BigQuery materialised views and purpose-built tables derived from customerx_warehouse. Optimised for fast dashboard and API queries. Serves Superset, FE widgets, and the Data API. Not ML-specific — for ML fe…
+
+- **AdPerformanceMart** (`customerx_mart.`) — Materialised view layer for ad performance dashboards. Pre-aggregates daily and weekly campaign, ad set, and ad metrics …
+- **CustomerRevenueMart** (`customerx_mart.`) — Materialised view layer for customer revenue and CLV reporting. Pre-joins Shopify order data with ad attribution records…
+
+### CustomerXFeatureStore
+The CustomerX Feature Store — curated ML-ready feature sets serving low-latency features to predictive and prescriptive models at inference time, and point-in-time correct features for model training. Carries feature versioning and valid_at timestamp…
+
+- **AccountPerformanceFeatures** (`customerx_features.`) — Feature set: account-level performance signals for churn prediction and bid optimisation models. Covers rolling 7d/30d/9…
+- **CreativeFatigueFeatures** (`customerx_features.`) — Feature set: creative-level fatigue signals for the fatigue scoring model. Covers frequency progression, CTR decay rate …
+
+
+## Data Sources
+
+Canonical catalogue of all external and internal sources.
+
+**MetaAdsAPI** `ACTIVE` ⚑ TrustX enforcement point
+Domain: `social_marketing__ad_performance`
+Data directly from Meta's advertising platforms (Facebook and Instagram) via the Marketing API. Covers campaign performance metrics (spend, impressions, clicks, conversions), ad creative details, audi…
+
+**MadgicxAuxiliaryAdData** `ACTIVE`
+Domain: `social_marketing__ad_performance`
+Proprietary data gathered from external sources outside official APIs. Covers competitor ads, offers, product catalogues, and landing pages collected by scanning Meta's Ad Library and other public web…
+
+**GoogleAdsAPI** `ACTIVE`
+Domain: `social_marketing__ad_performance`
+Data imported from Google's advertising platforms (Search, Display, YouTube) via the Google Ads API. Includes clicks, cost, conversions, impression share, and quality score at campaign, ad group, and …
+
+**GoogleAnalyticsGA4** `ACTIVE`
+Domain: `social_marketing__ad_performance`
+Website user behaviour and conversion data via GA4 BigQuery export. Provides traffic sources, user engagement (session duration, pages per session), and e-commerce events (revenue, product performance…
+
+**ShopifySource** `ACTIVE`
+Domain: `social_marketing__ecommerce`
+Direct connection to client Shopify stores pulling product, customer, and order data — product IDs, titles, prices, inventory levels, customer purchase history, and order values. Critical for e-commer…
+
+**KlaviyoSource** `DEFERRED`
+Domain: `social_marketing__ecommerce`
+Connection to client Klaviyo accounts providing email and SMS marketing performance, customer segments, and lifecycle stages. Key metrics: open rates, click-through rates, conversion revenue, and cust…
+
+**TikTokAdsAPI** `ACTIVE`
+Domain: `social_marketing__ad_performance`
+API-led connection to TikTok Ads Manager pulling campaign, ad group, and ad performance data — impressions, clicks, spend, conversions, and TikTok-specific signals including video views and completion…
+
+**MadgicxActivityLogs** `ACTIVE` ⚑ TrustX enforcement point
+Domain: `activity_logs__ad_action_execution, activity_logs__prism_pipeline_activity`
+Internal PostgreSQL production database — the product's own operational database and the largest data input at approximately 906 million rows across 100 tables in 12 product domains. Key tables: authe…
+
+**IntercomSource** `ACTIVE`
+Domain: `customer_success__support`
+Customer support data from Intercom covering contacts, conversations, and companies. Core tables: conversations (254,401 with 3,322,876 inner messages via conversation_parts), contacts (179,001). Ware…
+
+**LangfuseSource** `DEFERRED` ⚑ TrustX enforcement point
+Domain: `activity_logs__ai_langfuse_traces`
+AI agent tracing and evaluation platform. Planned to provide full AgentTrace records per θCortex agent run — prompt inputs, model outputs, tool calls, latency, token usage, and evaluation scores. Trus…
+
+**ClickUpSource** `DEFERRED`
+Domain: `operations__execution_tickets`
+Support tickets and feature requests from ClickUp. Planned to provide execution ticket data linking operational decisions to delivery outcomes. Deferred — credentials not yet landed. Post-cutover addi…
+
 
 ## Value Streams
-<!-- Framework: SAFe — Scaled Agile Framework value streams -->
-<!-- SAFe defines a value stream as the sequence of steps that delivers value     -->
-<!-- to a specific stakeholder. Madgicx has three: two active, one foundational.  -->
 
-Madgicx operates three value streams aligned to the SAFe (Scaled Agile Framework)
-model — sequences of steps that deliver value to a specific stakeholder.
-Two are active; one is the governed foundation both run on.
+### CustomerX
+**Type:** external | **Status:** defined
+**Primary objectives:** CustomerRetention, RevenueGrowth, ProcessOptimisation
 
-```
-    CustomerX Value Stream       OperX Value Stream
-    (external users)             (internal teams)
-    14 workflows defined         engdocs · madgicx-bi — emerging
-            │                          │
-            └──────────────┬───────────┘
-                           │
-                      TrustX Foundation
-               Governed AI & Data base
-          trusted data · governed agents
-          quality assurance · compliance
-```
+The Customer Experience Value Stream. The external-facing product surface — every workflow a media buyer touches to manage, optimise, and scale their advertising performance. Comprises all 14 primary product workflows. Success is measured by customer retention, daily active usage, measurable ROAS improvement, and account expansion (negative churn). Primary objectives: Customer Retention, Revenue Growth, Process Optimisation.
 
----
+**Workflows:** Onboarding, ChatWithData, MakingAds, AdQueueManagement, CreativeAnalysis, ScalingAndExpanding, BudgetManagement, AICommenter, CreatingCampaigns, Reporting, TrackingAndAttribution, DataClassification, AdAccountRestructuring
 
-### CustomerX — Customer Experience Value Stream
+### OperX
+**Type:** internal | **Status:** emerging
+**Primary objectives:** OperationalEfficiency, ProcessOptimisation, RiskMitigation
 
-**Users:** External — media buyers, agency operators, performance marketers
-**Status:** Defined — 14 active workflows
-**Primary objectives:** Customer Retention · Revenue Growth · Process Optimisation
+The Operational Excellence Value Stream. The internal-facing product surface — every AI & Data product that makes Madgicx teams more effective, consistent, and scalable in how they build and operate the platform. Currently emerging — Engineering Documentation Management (engdocs) is the first defined OperX workflow. Primary objectives: Operational Efficiency, Process Optimisation, Risk Mitigation.
 
-**Purpose:** Empower media buyers to unlock their advertising revenue potential through
-AI-powered intelligence that fits seamlessly into their daily workflows.
+**Workflows:** EngineeringDocumentation, MadgicxBI
 
-**Success measures:**
-- Retention rate and churn reduction
-- Time-to-value for new users (onboarding velocity)
-- Daily active usage across workflows
-- Measurable ROAS improvement attributable to Madgicx
-- NPS and account expansion (negative churn)
-- Satisfaction across all touchpoints — onboarding, billing, support, product
+### TrustX
+**Type:** foundational | **Status:** active
 
-**Quality of Service contract:**
-QoS is where TrustX and CustomerX meet — the measurable expression of the governed
-foundation experienced by the user. Workflows with critical QoS exposure:
-`chatwdata` · `reporting` · `budget` · `tracking`
+The Trusted AI & Data Foundation. Not a value stream beside the others — TrustX is the governed base that CustomerX and OperX both run on. It is the cross-cutting quality contract covering: trusted data (governed pipelines, freshness SLAs, lineage), trusted AI (agent auditability, explainability, hallucination controls), process governance (DataHub catalogue, CODEOWNERS, GitOps), and compliance (GDPR, CCPA, data classification). QoS is where TrustX and CustomerX meet — it is the measurable expression of trust experienced by the customer.
 
-#### CustomerX Workflows
+**Workflows:** TrackingAndAttribution, DataClassification, ActivityLog
 
-| # | ID | Name | Primary | Secondary | Tertiary | TrustX |
-|---|---|---|---|---|---|---|
-| 1 | `onboarding` | Onboarding Madgicx Users | Process Optimisation | Customer Retention | Revenue Growth | |
-| 2 | `chatwdata` | Chat with Data | Process Optimisation | Operational Efficiency | Risk Mitigation | |
-| 3 | `makeads` | Making Ads with AI | Process Optimisation | Operational Efficiency | Customer Retention | |
-| 4 | `adqueue` | Ad Queue Management | Process Optimisation | Operational Efficiency | Customer Retention | |
-| 5 | `creatives` | Creative Analysis | Operational Efficiency | Customer Retention | Revenue Growth | |
-| 6 | `scaling` | Scaling and Expanding | Risk Mitigation | Operational Efficiency | Revenue Growth | |
-| 7 | `budget` | Budget Management | Process Optimisation | Risk Mitigation | Customer Retention | |
-| 8 | `commenter` | AI Commenter | Operational Efficiency | Customer Retention | Revenue Growth | |
-| 9 | `campaigns` | Creating Campaigns | Process Optimisation | Risk Mitigation | Revenue Growth | |
-| 10 | `reporting` | Reporting | Process Optimisation | Risk Mitigation | Customer Retention | |
-| 11 | `tracking` | Tracking & Attribution | Risk Mitigation | Process Optimisation | Customer Retention | ✓ |
-| 12 | `classification` | Data Labeling & Classification | Operational Efficiency | Risk Mitigation | Customer Retention | ✓ |
-| 13 | `restructuring` | Ad Account Restructuring | Risk Mitigation | Customer Retention | Revenue Growth | |
-| 14 | `activity` | Activity Logs | Process Optimisation | Operational Efficiency | Risk Mitigation | ✓ |
 
-> **TrustX ✓** — workflow carries a TrustX enforcement responsibility in addition to
-> its CustomerX role. See TrustX section below.
+## Business Goals
 
-**Workflow dependency map:**
-```
-makeads ◄──────── creatives        (classification insights feed ad creation)
-    │                  ▲
-    ▼                  │
-adqueue ──────────► campaigns      (classification labels inform campaign build)
-                       │
-creatives ─────────► scaling       (performance patterns drive scaling decisions)
-    │
-    ▼
-classification
+Every initiative must connect to at least one goal.
 
-tracking ──────────► reporting
-    │
-    └──► (all workflows — broken tracking corrupts all downstream data)
+**1. OperationalEfficiency**  
+Ensure the right information reaches the right people at the right time — enabling informed decisions that reduce waste, accelerate workflows, and maximise resource utilisation across all business functions. Signal questions: Does this reduce manual effort or cognitive load? Does it give people better context to make faster, better decisions? Does it eliminate a recurring bottleneck?
+*Signals: manual_effort_reduction, decision_speed, bottleneck_elimination*
 
-chatwdata ──────────► (all workflows — horizontal AI interface)
-activity ───────────► (all workflows — horizontal audit trail)
-onboarding ─────────► (entry point — feeds all workflows for new users)
-budget ─────────────► campaigns · scaling
-restructuring ──────► campaigns · budget
-commenter ──────────► creatives (comment insights feed creative strategy)
-```
+**2. ProcessOptimisation**  
+Continuously refine workflows based on data-driven insights — analysing performance metrics, identifying bottlenecks, automating repetitive tasks, and standardising best practices. Improvement cycles are informed by both internal metrics and customer feedback. Signal questions: Does this create a more scalable, repeatable process? Does it replace a manual step with a governed, automated one? Does it produce metrics that enable further improvement?
+*Signals: scalability, automation_coverage, improvement_metrics*
 
----
+**3. CustomerRetention**  
+Build a product customers love to interact with daily — one that fits seamlessly into their workflows and delivers measurable performance improvements. Retention is won by proving tangible ROI and becoming indispensable to customer success. The goal is not just high retention but negative churn through account expansion.
+*Signals: product_stickiness, roi_demonstration, churn_reduction*
 
-### OperX — Operational Excellence Value Stream
+**4. RevenueGrowth**  
+Revenue growth extends beyond retention. Data science supports product marketing by exposing key tools and insights as value-add features — free value that hooks customers into the paid ecosystem. Data capabilities enable upsell identification, pricing optimisation, and premium-tier justification.
+*Signals: upsell_triggers, conversion_rate, monetisable_capabilities*
 
-**Users:** Internal — Engineering, Product, Data, Customer Success, Leadership
-**Status:** Emerging — first workflows in definition
-**Primary objectives:** Operational Efficiency · Process Optimisation · Risk Mitigation
+**5. RiskMitigation**  
+Eliminate single-platform dependencies (e.g. Meta), build a fluid and adaptable product architecture, and maintain feedback loops that provide a pulse on industry trends, customer needs, and emerging risks. Proactive over reactive.
+*Signals: platform_diversification, feedback_loops, architectural_flexibility*
 
-**Purpose:** Eliminate operational friction, knowledge fragmentation, and manual overhead
-that slows down the teams building and operating Madgicx. OperX products are the
-back-office engine that drives the quality of everything else.
+**6. QualityOfService**  
+Consistent, reliable data, intelligence, and platform performance — 24/7. This covers system uptime, data accuracy, algorithmic reliability, and platform responsiveness at every customer touchpoint. QoS is the service contract of the CustomerX value stream — the 14 workflows deliver value only as reliably as the TrustX foundation guarantees underneath them.
+*Signals: uptime, data_accuracy, observability, blast_radius_reduction*
 
-**Note:** Consistent with Madgicx's 'oneness' reform — any AI & Data product for any
-user (internal or external) is a product. A brief from an internal team is as valid
-as one from the external-facing side.
 
-**Success measures:**
-- Reduction in manual effort for recurring operational tasks
-- Cross-team knowledge accessibility and discoverability
-- Process consistency and SOP compliance
-- Engineering and delivery velocity
-- Internal onboarding time for new team members
+## Workflows
 
-#### OperX Workflows
+### CustomerX
 
-##### `engdocs` — Engineering Documentation Management
-**Status:** In definition
-**Objectives:** Operational Efficiency · Process Optimisation · Risk Mitigation
+**Onboarding** `[onboarding]`
+Onboarding Madgicx Users [onboarding]. Analyses and profiles new accounts to understand business model, validates tracking setup, establishes performance baselines, and identifies optimal account strategies. Value stream: CustomerX. Top objectives: Process Optimisation, Customer Retention, Revenue Growth.
+*Objectives: ProcessOptimisation, CustomerRetention, RevenueGrowth*
 
-AI-governed documentation co-pilot (AgentForge) that eliminates manual document
-authoring across the full initiative lifecycle:
-`Concept Brief → Initiative → PRD → Epic → User Story`
+**ChatWithData** `[chatwdata]` ⚠ QoS-critical
+Chat with Data [chatwdata]. Universal conversational co-pilot for querying advertising performance, executing account actions, generating custom analyses, troubleshooting issues, and building automations — all through natural language. Horizontal workflow serving every other workflow. QoS-critical: any data failure surfaces here first. Value stream: CustomerX. Top objectives: Process Optimisation, Operational Efficiency, Risk Mitigation.
+*Objectives: ProcessOptimisation, OperationalEfficiency, RiskMitigation*
 
-Enforces cross-layer ClickUp linking. Runs monthly governance to surface outdated,
-duplicate, or misaligned content. Checks every document against business objectives
-and OKR alignment before drafting.
+**MakingAds** `[makeads]`
+Making Ads with AI [makeads]. Generates creative variants, copy variations, and platform-optimised formats using AI based on brand guidelines and winning patterns. Value stream: CustomerX. Top objectives: Process Optimisation, Operational Efficiency, Customer Retention.
+*Objectives: ProcessOptimisation, OperationalEfficiency, CustomerRetention*
 
-**Domains:** `operations__sops_and_documentation` · `operations__planning_and_okrs` · `operations__execution_tickets`
-**Key terms:** `Operations.SOP` · `Operations.OKR` · `Operations.InitiativeLifecycle` · `Operations.ExecutionTicket` · `Operations.Roadmap`
+**AdQueueManagement** `[adqueue]`
+Ad Queue Management [adqueue]. Manages the pipeline of ads waiting to launch, schedules creative rotations, handles approvals, and coordinates pause/resume operations. Value stream: CustomerX. Top objectives: Process Optimisation, Operational Efficiency, Customer Retention.
+*Objectives: ProcessOptimisation, OperationalEfficiency, CustomerRetention*
 
----
+**CreativeAnalysis** `[creatives]`
+Creative Analysis [creatives]. Detects creative fatigue, identifies winning elements, monitors competitive strategies, and analyses performance patterns across creative assets. Value stream: CustomerX. Top objectives: Operational Efficiency, Customer Retention, Revenue Growth.
+*Objectives: OperationalEfficiency, CustomerRetention, RevenueGrowth*
 
-##### `madgicx-bi` — Madgicx BI
-**Status:** In definition
-**Objectives:** Operational Efficiency · Revenue Growth · Customer Retention
+**ScalingAndExpanding** `[scaling]` ⚠ QoS-high
+Scaling and Expanding [scaling]. Identifies and scales winning campaigns, expands to new geographies and audiences, detects saturation, and manages creative resurrection. QoS-critical: scaling on stale data causes wasted spend. Value stream: CustomerX. Top objectives: Risk Mitigation, Operational Efficiency, Revenue Growth.
+*Objectives: RiskMitigation, OperationalEfficiency, RevenueGrowth*
 
-Internal BI product serving Marketing and Customer Success teams. Provides
-governed, trusted data products for internal performance reporting, customer
-health analysis, and marketing intelligence — built on θCortex and BigQuery L3.
+**BudgetManagement** `[budget]` ⚠ QoS-critical
+Budget Management [budget]. Optimises daily budget pacing, implements margin-based bidding, prevents exhaustion, redistributes underutilised budgets, and manages multi-account allocation. QoS-critical: financial decisions on bad data cause direct measurable customer loss. Value stream: CustomerX. Top objectives: Process Optimisation, Risk Mitigation, Customer Retention.
+*Objectives: ProcessOptimisation, RiskMitigation, CustomerRetention*
 
-**Domains:** `customer_success` · `social_marketing` · `finance_and_hr__finance` · `operations__planning_and_okrs`
-**Key terms:** `Finance.MRR` · `Finance.ChurnRate` · `Finance.CAC` · `Finance.LTV` · `EcommerceShopify.CLV`
+**AICommenter** `[commenter]`
+AI Commenter [commenter]. Automatically responds to ad comments, moderates harmful content, and extracts customer feedback and insights from comment sections. Value stream: CustomerX. Top objectives: Operational Efficiency, Customer Retention, Revenue Growth.
+*Objectives: OperationalEfficiency, CustomerRetention, RevenueGrowth*
 
----
+**CreatingCampaigns** `[campaigns]`
+Creating Campaigns [campaigns]. Builds optimal campaign structures, configures audiences and delivery settings, launches with proven creatives, and clones successful setups. Value stream: CustomerX. Top objectives: Process Optimisation, Risk Mitigation, Revenue Growth.
+*Objectives: ProcessOptimisation, RiskMitigation, RevenueGrowth*
 
-### TrustX — Trusted AI & Data Foundation
+**Reporting** `[reporting]` ⚠ QoS-critical
+Reporting [reporting]. Generates executive summaries, builds custom dashboards, creates attribution reports, and provides cross-channel performance comparisons. QoS-critical: stale or inaccurate data produces misleading reports causing direct trust risk. Value stream: CustomerX. Top objectives: Process Optimisation, Risk Mitigation, Customer Retention.
+*Objectives: ProcessOptimisation, RiskMitigation, CustomerRetention*
 
-**Users:** All — serves CustomerX and OperX equally
-**Status:** Cross-cutting foundation — not a value stream beside the others
+**TrackingAndAttribution** `[tracking]` ⚑ TrustX enforcement point ⚠ QoS-critical
+Tracking and Attribution [tracking]. Validates pixel implementation, optimises attribution windows, reconciles platform discrepancies, and ensures accurate conversion tracking. Foundation for all performance data — failure cascades into every downstream workflow. TrustX enforcement point. Value stream: CustomerX with TrustX responsibility. Top objectives: Risk Mitigation, Process Optimisation, Customer Retention.
+*Objectives: RiskMitigation, ProcessOptimisation, CustomerRetention*
 
-**Purpose:** TrustX is the governed foundation that PRISM and θCortex both run on.
-PRISM ingests and transforms data (L0→L3 across GCS and BigQuery). θCortex delivers
-data products and AI capabilities on top of PRISM. Neither can be trusted without
-TrustX — which governs that every PRISM asset has an owner and domain in DataHub,
-every θCortex AI decision is traceable via Langfuse, and data quality SLAs are
-enforced end to end. TrustX is the operating system; CustomerX and OperX are the
-applications. Invisible when working well — catastrophic when absent.
+**DataClassification** `[classification]` ⚑ TrustX enforcement point
+Data Labeling and Classification [classification]. Tags campaigns by funnel stage, labels creative attributes and elements, classifies value propositions, and maintains performance tier classifications. TrustX enforcement point — enforces canonical terminology and consistent taxonomy. Value stream: CustomerX with TrustX responsibility. Top objectives: Operational Efficiency, Risk Mitigation, Customer Retention.
+*Objectives: OperationalEfficiency, RiskMitigation, CustomerRetention*
 
-**TrustX is not** a team, a product surface, or a workflow owner. It is a governed
-base layer — invisible when working well, catastrophic when absent.
+**AdAccountRestructuring** `[restructuring]`
+Ad Account Restructuring [restructuring]. Audits and reorganises campaign structure to align with business goals, consolidates fragmentation, implements proper naming conventions, and optimises campaign density. Value stream: CustomerX. Top objectives: Risk Mitigation, Customer Retention, Revenue Growth.
+*Objectives: RiskMitigation, CustomerRetention, RevenueGrowth*
 
-#### Trust Contract
+**ActivityLog** `[activity]` ⚑ TrustX enforcement point
+Activity Logs [activity]. The system memory and audit trail — tracks everything that happens and why. Provides the audit trail linking every platform change, AI decision, and automation event to its originating context. Horizontal workflow serving all other workflows. TrustX enforcement point. Value stream: CustomerX with TrustX responsibility. Top objectives: Process Optimisation, Operational Efficiency, Risk Mitigation.
+*Objectives: ProcessOptimisation, OperationalEfficiency, RiskMitigation*
 
-##### Data Trust
-- All data products governed via DataHub (domains, glossary, ownership)
-- Data freshness SLAs enforced per domain
-- Policy tags applied at asset level (`INTERNAL_USE_ONLY` · `CONFIDENTIAL_*`)
-- No ungoverned data assets — everything has a domain and an owner
+### OperX
 
-##### AI Trust
-- All AI agent decisions traceable via Langfuse (`AgentTrace`)
-- No automated action without an immutable `ActionExecution` record
-- AI Langfuse alerts monitored for PII violations and prompt injection
-- Model drift detected via θCortex alerts
+**MadgicxBI** `[madgicxbi]` ⚠ QoS-critical
+Madgicx Business Intelligence [madgicxbi]. Unified analytics layer providing cross-channel performance visibility, custom dashboard creation, attribution reporting, and executive-level summaries. Surfaces data from all connected ad platforms, Shopify, and Klaviyo in a single governed reporting surface. QoS-critical: stale or inaccurate data produces misleading reports causing direct trust risk. Value stream: OperX. Top objectives: Process Optimisation, Risk Mitigation, Customer Retention.
+*Objectives: ProcessOptimisation, RiskMitigation, CustomerRetention*
 
-##### Process Trust
-- Every initiative follows the `InitiativeLifecycle` gate model
-- No document created without alignment checks (AgentForge)
-- SOPs documented, versioned, and reviewed on cadence
-- OKR alignment verified before any initiative progresses
+**EngineeringDocumentation** `[engdocs]`
+Engineering Documentation Management [engdocs]. AI-governed documentation co-pilot that eliminates manual document authoring, maintains canonical skill and runbook files, and surfaces institutional knowledge on demand. The first defined OperX workflow — currently in definition. Value stream: OperX. Top objectives: Operational Efficiency, Process Optimisation, Risk Mitigation.
+*Objectives: OperationalEfficiency, ProcessOptimisation, RiskMitigation*
 
-##### Compliance Trust
-- GDPR data minimisation applied to all PII-containing sub-domains
-- `finance_and_hr` — zero standing engineer access, audit logs on all queries
-- Retention tiers enforced per sub-domain (`RetentionTier`)
-- Ad action execution — indefinite retention for compliance audit
 
-#### TrustX Enforcement Points
-Workflows that carry TrustX responsibilities in addition to their value stream role:
+## Domain Taxonomy
 
-| Workflow | Value Stream | Contract | Role |
-|---|---|---|---|
-| `tracking` | CustomerX | Data Trust | Validates pixel integrity and attribution accuracy. Broken tracking corrupts the data foundation for all other workflows. |
-| `classification` | CustomerX | Data Trust | Enforces canonical terminology and consistent taxonomy. Inconsistent labels corrupt downstream data products. |
-| `activity` | CustomerX | AI Trust | System memory and audit trail. Every AI decision, action, and platform event logged here. Authoritative "what happened and why." |
+All assets must declare a domain from this list.
 
----
+### Social Marketing (`social_marketing`)
+**Owner group:** devx-data
 
-## Data Domains
-<!-- Source: DataHub domains.yml v0.3 -->
+- `social_marketing__ad_performance` — Ad Performance
+- `social_marketing__ecommerce` — eCommerce
 
-8 parent domains · 26 sub-domains. Sub-domains inherit group from parent unless overridden.
+### External Factors (`external_factors`)
+**Owner group:** devx-data
 
-| Domain | ID | Group | Policy | Sub-domains |
-|---|---|---|---|---|
-| Social Marketing | `social_marketing` | devx-data | INTERNAL_USE_ONLY → CONFIDENTIAL_OPERATIONAL | `ad_performance` · `ecommerce` |
-| External Factors | `external_factors` | devx-data | INTERNAL_USE_ONLY | `socioeconomic_indicators` · `regional_events` · `social_media_signals` |
-| Activity Logs | `activity_logs` | devx-data | CONFIDENTIAL_OPERATIONAL | `ad_provider_activity_logs` · `ai_langfuse_traces` · `fe_fullstory_traces` · `ad_action_execution` · `ops_action_execution` · `prism_pipeline_activity` · `cortex_automation_activity` |
-| Signals & Alerts | `signals_and_alerts` | devx-data | INTERNAL_USE_ONLY → CONFIDENTIAL_OPERATIONAL | `ad_performance_alerts` · `cortex_data_quality_alerts` · `prism_pipeline_alerts` · `ai_langfuse_alerts` |
-| Creative Library | `creative_library` | core-ui-ux | CONFIDENTIAL_OPERATIONAL | `assets` · `metadata` |
-| Customer Success | `customer_success` | customer-success | CONFIDENTIAL_PII / CONFIDENTIAL_OPERATIONAL | `accounts` · `support` · `revenue`* |
-| Finance & HR | `finance_and_hr` | finance-hr | CONFIDENTIAL_RESTRICTED | `finance` · `infrastructure_costs` · `hr` |
-| Operations | `operations` | operations | INTERNAL_USE_ONLY | `planning_and_okrs` · `sops_and_documentation` · `execution_tickets` |
+- `external_factors__socioeconomic_indicators` — Socioeconomic Indicators
+- `external_factors__regional_events` — Regional Newsworthy Events
+- `external_factors__social_media_signals` — Social Media Signals
 
-> `revenue`* sub-domain jointly governed by `finance-hr` (group override)
+### Activity Logs (`activity_logs`)
+**Owner group:** devx-data
 
-**TrustX domain responsibilities:**
-- `signals_and_alerts__ai_langfuse_alerts` — AI safety and compliance
-- `signals_and_alerts__cortex_data_quality_alerts` — ML model health
-- `signals_and_alerts__prism_pipeline_alerts` — pipeline reliability
-- `activity_logs__ai_langfuse_traces` — AI agent audit trail
-- `activity_logs__ad_action_execution` — ad action audit trail (indefinite retention)
-- `activity_logs__ops_action_execution` — ops action audit trail (indefinite retention)
-- `finance_and_hr` — most restricted domain, zero standing engineer access
+- `activity_logs__ad_provider_activity_logs` — Ad Provider Activity Logs
+- `activity_logs__ai_langfuse_traces` — AI Langfuse Traces
+- `activity_logs__fe_fullstory_traces` — Frontend FullStory Traces
+- `activity_logs__ad_action_execution` — Ad Action Execution
+- `activity_logs__ops_action_execution` — Ops Action Execution
+- `activity_logs__prism_pipeline_activity` — PRISM Pipeline Activity
+- `activity_logs__cortex_automation_activity` — θCortex Automation Activity
 
----
+### Signals & Alerts (`signals_and_alerts`)
+**Owner group:** devx-data
 
-## Glossary
-<!-- Source: DataHub glossary_recipe.yml v0.2 -->
+- `signals_and_alerts__ad_performance_alerts` — Ad Performance Alerts
+- `signals_and_alerts__cortex_data_quality_alerts` — θCortex Data Quality Alerts
+- `signals_and_alerts__prism_pipeline_alerts` — PRISM Pipeline Alerts
+- `signals_and_alerts__ai_langfuse_alerts` — AI Langfuse Alerts
 
-13 nodes · ~80 canonical terms. Use these terms — not platform-specific equivalents —
-in all Madgicx documents, specs, and artefacts.
+### Creative Library (`creative_library`)
+**Owner group:** core-ui-ux
 
-### Node → Domain mapping
+- `creative_library__assets` — Creative Assets
+- `creative_library__metadata` — Creative Metadata
 
-| Node | Domain |
-|---|---|
-| `AdPerformanceMetrics` | `social_marketing__ad_performance` |
-| `ConversionMetrics` | `social_marketing__ad_performance` |
-| `AudienceTargeting` | `social_marketing__ad_performance` |
-| `CampaignStructure` | `social_marketing__ad_performance` |
-| `EcommerceShopify` | `social_marketing__ecommerce` |
-| `EmailMarketing` | `social_marketing__ecommerce` |
-| `DataGovernance` | `signals_and_alerts` |
-| `SignalsAndAlerts` | `signals_and_alerts` |
-| `ActivityLogs` | `activity_logs` |
-| `CreativeLibrary` | `creative_library` |
-| `Finance` | `finance_and_hr__finance` |
-| `HR` | `finance_and_hr__hr` |
-| `Operations` | `operations` |
+### Customer Success (`customer_success`)
+**Owner group:** customer-success
+
+- `customer_success__accounts` — Accounts
+- `customer_success__support` — Support
+- `customer_success__revenue` — Revenue (group: finance-hr)
+
+### Finance & HR (`finance_and_hr`)
+**Owner group:** finance-hr
+
+- `finance_and_hr__finance` — Finance
+- `finance_and_hr__infrastructure_costs` — Infrastructure Costs
+- `finance_and_hr__hr` — HR
+
+### Operations (`operations`)
+**Owner group:** operations
+
+- `operations__planning_and_okrs` — Planning & OKRs
+- `operations__sops_and_documentation` — SOPs & Documentation
+- `operations__execution_tickets` — Execution Tickets
+
+
+## Glossary Index
+
+Use dot-notation paths for all glossary term references in briefs, epics, and features.
 
 ### AdPerformanceMetrics
-Core KPIs across Facebook Ads, Google Ads, TikTok Ads.
+Core key performance indicators (KPIs) used to evaluate the effectiveness and efficiency of paid advertising campaigns across all platforms including Facebook Ads, Google Ads, TikTok Ads, Snapchat Ads…
 
-| Term | Definition | Formula |
-|---|---|---|
-| `Impressions` | Total ad displays | — |
-| `Clicks` | Total ad clicks | — |
-| `Spend` | Total ad spend (account currency) | — |
-| `Reach` | Unique users who saw ad at least once | — |
-| `Frequency` | Avg times each user saw the ad | `impressions / reach` |
-| `CTR` | Click-through rate | `(clicks / impressions) * 100` |
-| `CPM` | Cost per 1,000 impressions | `(spend / impressions) * 1000` |
-| `CPC` | Cost per click | `spend / clicks` |
-| `ROAS` | Return on ad spend — **primary profitability metric** | `purchase_value / spend` |
-| `CPA` | Cost per acquisition | `spend / conversions` |
-| `QualityScore` | Google Ads quality diagnostic (1–10) | — |
-| `RelevanceScore` | Meta ad relevance diagnostic | ABOVE_AVERAGE · AVERAGE · BELOW_AVERAGE |
+- `AdPerformanceMetrics.Impressions` — The total number of times an ad was displayed to a user, regardless of whether the user interacted with it. One impressi…
+- `AdPerformanceMetrics.Clicks` — The total number of times users clicked on an ad. Includes all click types such as link clicks, button clicks, and outbo…
+- `AdPerformanceMetrics.Spend` — The total amount of money spent on advertising during a given period, expressed in the account currency. Also referred t…
+- `AdPerformanceMetrics.Reach` — The number of unique users who saw an ad at least once within a given time period. Unlike impressions, reach counts each…
+- `AdPerformanceMetrics.Frequency` — The average number of times each unique user saw an ad within a given time period. Calculated as Impressions divided by …
+- `AdPerformanceMetrics.CTR` — Click-Through Rate. The percentage of impressions that resulted in a click. Calculated as (Clicks / Impressions) * 100. …
+- `AdPerformanceMetrics.CPM` — Cost Per Mille (Cost Per Thousand Impressions). The average cost to deliver 1,000 impressions of an ad. Calculated as (S…
+- `AdPerformanceMetrics.CPC` — Cost Per Click. The average cost paid for each click on an ad. Calculated as Spend divided by total Clicks. A key effici…
+- `AdPerformanceMetrics.ROAS` — Return On Ad Spend. The revenue generated for every unit of currency spent on advertising. Calculated as (Revenue / Spen…
+- `AdPerformanceMetrics.CPA` — Cost Per Acquisition (also Cost Per Action or Cost Per Result). The average cost to achieve one desired outcome such as …
+- `AdPerformanceMetrics.QualityScore` — A diagnostic metric (1-10) in Google Ads that estimates the quality of ads, keywords, and landing pages relative to comp…
+- `AdPerformanceMetrics.RelevanceScore` — A Facebook/Meta ad relevance diagnostic score split into Quality Ranking, Engagement Rate Ranking, and Conversion Rate R…
 
 ### ConversionMetrics
-Purchase events, leads, downstream revenue.
+Metrics that track user actions following ad exposure, including purchases, leads, add-to-carts, and other conversion events. Data is sourced from platform pixels, server-side Conversions APIs, and Sh…
 
-| Term | Definition | Formula |
-|---|---|---|
-| `Conversions` | Total desired actions post ad interaction | — |
-| `Purchases` | Completed purchase transactions attributed to ads | — |
-| `PurchaseValue` | Total revenue from purchase conversions | — |
-| `AOV` | Average order value | `purchase_value / purchases` |
-| `AddToCart` | Products added to cart after ad interaction | — |
-| `InitiateCheckout` | Checkout sessions started after ad interaction | — |
-| `Leads` | Lead form submissions after ad interaction | — |
-| `AttributionWindow` | Period in which conversion credits ad. Default: 7d click · 1d view | — |
-| `ViewThroughConversion` | Conversion from ad viewed but not clicked | — |
+- `ConversionMetrics.Conversions` — The total number of desired actions completed by users after interacting with an ad. A conversion event is defined per c…
+- `ConversionMetrics.Purchases` — The total number of completed purchase transactions attributed to ad interactions within the attribution window. Sourced…
+- `ConversionMetrics.PurchaseValue` — The total revenue value of all purchase conversions attributed to ads within the attribution window. Also referred to as…
+- `ConversionMetrics.AOV` — Average Order Value. The average revenue generated per purchase transaction. Calculated as Total Purchase Value divided …
+- `ConversionMetrics.AddToCart` — The total number of times users added a product to their shopping cart after clicking or viewing an ad. A mid-funnel eng…
+- `ConversionMetrics.InitiateCheckout` — The number of times users began the checkout process after ad interaction. Sits between Add-to-Cart and Purchase in the …
+- `ConversionMetrics.Leads` — The total number of lead form submissions or other lead generation events completed after ad interaction. Relevant for l…
+- `ConversionMetrics.AttributionWindow` — The time period after a user clicks or views an ad during which a conversion is credited to that ad. Madgicx default: 7-…
+- `ConversionMetrics.ViewThroughConversion` — A conversion credited to an ad that was seen but not clicked. The user converted within the view-through attribution win…
 
 ### AudienceTargeting
+Terminology related to audience definition, segmentation, and targeting used across Facebook Ads Manager, Google Ads, TikTok Ads, and Klaviyo. Covers custom audiences, lookalikes, interest targeting, …
 
-| Term | Definition |
-|---|---|
-| `CustomAudience` | First-party data audience (email lists, pixel visitors, CRM) |
-| `LookalikeAudience` | Algorithmically generated audience mirroring a source audience |
-| `RetargetingAudience` | Users who previously interacted with the brand |
-| `ProspectingAudience` | Cold audience — no prior brand interaction |
-| `AudienceOverlap` | % of users shared between audiences. High overlap → inflated CPMs |
-| `KlaviyoSegment` | Dynamic/static Klaviyo contact list. Source for Facebook Custom Audiences |
+- `AudienceTargeting.CustomAudience` — An audience built from first-party data such as customer email lists, website visitors (via pixel), app users, or CRM da…
+- `AudienceTargeting.LookalikeAudience` — An algorithmically generated audience that mirrors the characteristics of a source audience (e.g., purchasers). Used to …
+- `AudienceTargeting.RetargetingAudience` — An audience composed of users who have previously interacted with the brand (visited the website, viewed a product, aban…
+- `AudienceTargeting.ProspectingAudience` — A cold audience of users who have not previously interacted with the brand. Targeted using interest, demographic, behavi…
+- `AudienceTargeting.AudienceOverlap` — The percentage of users shared between two or more audiences. High overlap causes ad set competition (auction overlap) i…
+- `AudienceTargeting.KlaviyoSegment` — A dynamic or static list of contacts in Klaviyo defined by behavioral or property-based conditions (e.g., purchased in l…
 
 ### CampaignStructure
+The hierarchical organization of paid advertising assets across platforms. Facebook/Meta: Account -> Campaign -> Ad Set -> Ad. Google Ads: Account -> Campaign -> Ad Group -> Ad / Keyword. TikTok: Acco…
 
-**Facebook:** `AdAccount → Campaign → AdSet → Ad`
-**Google:** `GoogleAdAccount → GoogleCampaign → AdGroup → Ad/Keyword`
-**TikTok:** `Account → Campaign → Ad Group → Ad`
+#### FacebookCampaignStructure
+Structural entities specific to the Meta (Facebook & Instagram) advertising platform as ingested via the Marketing API.
 
-Key terms: `CBO` (Campaign Budget Optimization — budget auto-distributed across ad sets) ·
-`PerformanceMax` (Google automated campaign across all inventory — replaced Smart Shopping 2022)
+- `CampaignStructure.FacebookCampaignStructure.AdAccount` — The top-level container for all Facebook advertising activity. Identified by act_<account_id>. Houses billing, pixels, a…
+- `CampaignStructure.FacebookCampaignStructure.Campaign` — The second level of the Facebook ad hierarchy. Defines the advertising objective (e.g., CONVERSIONS, REACH, TRAFFIC). Bu…
+- `CampaignStructure.FacebookCampaignStructure.AdSet` — The third level of the Facebook ad hierarchy. Defines the target audience, placements, schedule, and ad set-level budget…
+- `CampaignStructure.FacebookCampaignStructure.Ad` — The leaf-level creative unit within a Facebook Ad Set. Defines the visual and copy content shown to users. Contains the …
+- `CampaignStructure.FacebookCampaignStructure.CBO` — Campaign Budget Optimization. A Facebook feature where the campaign-level budget is automatically distributed across ad …
+
+#### GoogleCampaignStructure
+Structural entities specific to Google Ads as ingested via the Google Ads API.
+
+- `CampaignStructure.GoogleCampaignStructure.GoogleAdAccount` — The top-level Google Ads account container identified by a 10-digit customer ID. Can be a standalone account or a sub-ac…
+- `CampaignStructure.GoogleCampaignStructure.GoogleCampaign` — The campaign level in Google Ads defining campaign type (Search, Display, Shopping, Performance Max, Video), budget, and…
+- `CampaignStructure.GoogleCampaignStructure.AdGroup` — The ad group level in Google Ads, sitting below Campaign and above Ads/Keywords. Organizes ads by theme and associates t…
+- `CampaignStructure.GoogleCampaignStructure.PerformanceMax` — Google's automated, goal-based campaign type that serves ads across all Google inventory (Search, Display, YouTube, Gmai…
+
 
 ### EcommerceShopify
+Business terms related to eCommerce operations and Shopify data ingested to enrich advertising performance with actual order, product, and customer data. Enables true ROAS calculation and LTV analysis…
 
-| Term | Definition | Formula |
-|---|---|---|
-| `ShopifyOrder` | Completed/pending transaction — primary revenue record | — |
-| `ShopifyProduct` | Sellable item. Used for product-level ROAS and ad catalog feeds | — |
-| `ShopifyCustomer` | Customer record. Used for audience building and CLV | — |
-| `CLV` | Customer lifetime value | `avg_order_value * purchase_frequency * customer_lifespan` |
-| `RefundRate` | % of orders refunded | `(refunded_orders / total_orders) * 100` |
-| `NewVsReturningCustomer` | First-time (NEW) vs repeat (RETURNING) buyer | `orders_count == 1 → NEW` |
+- `EcommerceShopify.ShopifyOrder` — A completed or pending customer transaction in Shopify. Contains order ID, line items, financial status, fulfillment sta…
+- `EcommerceShopify.ShopifyProduct` — A product entity in Shopify representing a sellable item. Contains product title, variants, pricing, inventory, and tags…
+- `EcommerceShopify.ShopifyCustomer` — A customer record in Shopify containing contact information, order history, and tags. Used for audience building (syncin…
+- `EcommerceShopify.CLV` — Customer Lifetime Value. The predicted or historical total revenue a customer generates over their entire relationship w…
+- `EcommerceShopify.RefundRate` — The percentage of orders that were refunded within a given period. Calculated as (Refunded Orders / Total Orders) * 100.…
+- `EcommerceShopify.NewVsReturningCustomer` — A classification of a Shopify order as originating from a first-time buyer (New Customer) or a repeat buyer (Returning C…
 
-### EmailMarketing (Klaviyo)
+### EmailMarketing
+Business terms related to email and SMS marketing performance via Klaviyo. Klaviyo is treated as an eCommerce engagement channel — flows are triggered by Shopify order events, revenue attribution is t…
 
-| Term | Definition |
-|---|---|
-| `EmailOpenRate` | % of delivered emails opened. ⚠ Inflated post iOS 15 MPP — use click rate |
-| `EmailClickRate` | % of delivered emails with at least one click. More reliable post-iOS 15 |
-| `KlaviyoFlow` | Automated email/SMS sequence triggered by Shopify event. Continuous revenue driver |
-| `KlaviyoCampaign` | One-time broadcast email/SMS. 14-day click attribution default |
-| `EmailAttributedRevenue` | Revenue attributed to Klaviyo. ⚠ May double-count with Facebook/Google |
-| `ListGrowthRate` | Net subscriber growth rate | `((new - unsubscribes - bounces) / starting) * 100` |
+- `EmailMarketing.EmailOpenRate` — The percentage of delivered emails that were opened by recipients. Calculated as (Unique Opens / Delivered Emails) * 100…
+- `EmailMarketing.EmailClickRate` — The percentage of delivered emails where at least one link was clicked. Also called Click-to-Open Rate (CTOR) when measu…
+- `EmailMarketing.KlaviyoFlow` — An automated email or SMS sequence in Klaviyo triggered by a specific customer action or Shopify order event (e.g., Welc…
+- `EmailMarketing.KlaviyoCampaign` — A one-time broadcast email or SMS send in Klaviyo targeted to a specific segment or list. Unlike flows, campaigns are ma…
+- `EmailMarketing.EmailAttributedRevenue` — Revenue attributed to Klaviyo email campaigns or flows within the platform's attribution window. Klaviyo uses last-touch…
+- `EmailMarketing.ListGrowthRate` — The rate at which the Klaviyo subscriber list is growing net of unsubscribes and bounces. Calculated as ((New Subscriber…
 
 ### DataGovernance
+Terms related to data quality, pipeline reliability, ingestion health, and attribution governance for the Madgicx data platform. These concepts are the basis for the alerts and signals produced in the…
 
-**Attribution models:**
-`LastClickAttribution` (single-touch) · `DataDrivenAttribution` (ML multi-touch — Google recommended) ·
-`MetaAttributedConversions` (⚠ subject to iOS 14.5+ signal loss — deduplicate via `event_id`)
+#### Attribution
+Concepts and models governing how credit for a conversion is assigned to one or more ad touchpoints across the customer journey.
 
-**Ingestion health:**
+- `DataGovernance.Attribution.LastClickAttribution` — An attribution model that assigns 100% of conversion credit to the last ad clicked before conversion. Simple but underva…
+- `DataGovernance.Attribution.DataDrivenAttribution` — A machine-learning-based attribution model available in Google Ads and GA4 that distributes conversion credit across all…
+- `DataGovernance.Attribution.MetaAttributedConversions` — Conversions reported within Meta Ads Manager based on the Meta pixel, Conversions API (CAPI), or app SDK. Subject to iOS…
 
-| Term | Definition |
-|---|---|
-| `DataFreshness` | Time since last successful sync. SLAs: Facebook <3h · Google <3h · Shopify <1h · Klaviyo <6h |
-| `APIRateLimit` | Facebook: 200 score-based · Google: 15,000 ops/day · Shopify: 40 req/sec |
-| `DataGap` | Missing/incomplete data period. Severity: WARNING · CRITICAL. Remediation: backfill |
-| `ConversionDelay` | Facebook up to 72h delay. Madgicx uses 3-day buffer for stable ROAS |
+#### IngestionHealth
+Metrics and flags monitoring the reliability and completeness of data ingestion pipelines from all advertising and eCommerce sources. Breaches of these thresholds produce alerts in the Signals & Alert…
+
+- `DataGovernance.IngestionHealth.DataFreshness` — The recency of ingested data relative to the current timestamp. Defined as the time elapsed since the last successful da…
+- `DataGovernance.IngestionHealth.APIRateLimit` — The maximum number of API calls permitted by a platform within a given time window. Key limits: Facebook Marketing API (…
+- `DataGovernance.IngestionHealth.DataGap` — A period of missing or incomplete data in an ingested dataset, caused by API outages, rate limiting, credential expiry, …
+- `DataGovernance.IngestionHealth.ConversionDelay` — The latency between a conversion event occurring and it appearing in platform reporting APIs. Facebook can delay up to 7…
+
 
 ### SignalsAndAlerts
+Terms defining the alert taxonomy, severity model, and signal types produced by the Madgicx platform. Alerts are consumed by the AI Campaign Management agent to trigger or suppress automated actions, …
 
-| Term | Definition |
-|---|---|
-| `AlertSeverity` | INFO · WARNING · CRITICAL |
-| `PerformanceThreshold` | Predefined boundary triggering an alert. Scope: campaign · adset · account · benchmark |
-| `AnomalySignal` | Statistical deviation from baseline — no explicit threshold needed |
-| `SLABreach` | Alert when data freshness or pipeline health SLA is violated |
-| `AdFatigue` | Creative shown too often → declining engagement + rising CPMs. Threshold: `frequency > 3.5 AND ctr_decline > 15%` |
+- `SignalsAndAlerts.AlertSeverity` — The urgency classification assigned to a signal or alert. Determines routing, escalation, and automated response behavio…
+- `SignalsAndAlerts.PerformanceThreshold` — A predefined boundary value for an ad performance metric beyond which an alert is triggered. Thresholds are defined per …
+- `SignalsAndAlerts.AnomalySignal` — A structured signal produced when a metric exhibits statistically anomalous behaviour relative to its historical baselin…
+- `SignalsAndAlerts.SLABreach` — An alert produced when a data freshness or pipeline health SLA is violated. For example, a Facebook Ads sync that has no…
+- `SignalsAndAlerts.AdFatigue` — A signal indicating that an ad creative has been shown to its target audience too many times, resulting in declining eng…
 
 ### ActivityLogs
+Terms defining the event log taxonomy, trace types, and data retention concepts for the Madgicx platform. Covers AI agent traces, frontend session events, ad action execution records, and platform orc…
 
-| Term | Definition | Retention |
-|---|---|---|
-| `AgentTrace` | Complete AI agent execution record via Langfuse | 90d hot · 1yr cold |
-| `ActionExecution` | Immutable record of every AI action against ad platform | Indefinite |
-| `CDCEvent` | Change Data Capture event from PRISM via Debezium | Per pipeline SLA |
-| `SessionTrace` | User session record via FullStory. Pseudonymised | Per GDPR policy |
-| `RetentionTier` | HOT_90D · HOT_1Y · COLD_1Y · COLD_7Y · INDEFINITE | — |
+- `ActivityLogs.AgentTrace` — A complete execution record of a single AI agent run captured via Langfuse. Contains prompt inputs, model outputs, tool …
+- `ActivityLogs.ActionExecution` — An immutable record of a single action executed by the AI Campaign Management agent against an ad platform. Records acti…
+- `ActivityLogs.CDCEvent` — A Change Data Capture event produced by the PRISM platform via Debezium. Records row-level inserts, updates, and deletes…
+- `ActivityLogs.SessionTrace` — A user session record captured from the Madgicx web application via FullStory. Contains page views, feature interactions…
+- `ActivityLogs.RetentionTier` — The data retention classification applied to a log or trace dataset determining how long records are kept in hot (querya…
 
 ### CreativeLibrary
+Terms defining the creative asset lifecycle, performance scoring model, and metadata concepts for the Madgicx Creative Studio. Covers asset states from generation through archival, enrichment scoring …
 
-| Term | Definition |
-|---|---|
-| `CreativeAsset` | Single ad creative (VIDEO · IMAGE · CAROUSEL · COPY). Identified by asset URN |
-| `AssetLifecycleStatus` | DRAFT · ACTIVE · PAUSED · ARCHIVED · REJECTED |
-| `PerformanceScore` | Composite score: ROAS contribution + CTR lift + fatigue. Range: 0.0–10.0 |
-| `CreativeFatigue` | Engagement decline from overexposure. Triggers rotation signal to AI agent |
-| `ABTestAssignment` | Creative assignment to control/treatment variant under controlled traffic split |
+- `CreativeLibrary.CreativeAsset` — A single advertising creative unit produced by or managed within the Madgicx Creative Studio. Can be a video, static ima…
+- `CreativeLibrary.AssetLifecycleStatus` — The current state of a creative asset in its lifecycle. Controls whether the asset is eligible for ad delivery, under re…
+- `CreativeLibrary.PerformanceScore` — A composite score written back to a creative asset by the AI Campaign Management agent based on observed ad performance.…
+- `CreativeLibrary.CreativeFatigue` — The state in which a creative asset has been shown to its target audience so frequently that engagement metrics decline …
+- `CreativeLibrary.ABTestAssignment` — The experimental assignment of a creative asset to a specific test variant (control or treatment) within a structured A/…
 
 ### Finance
-⚠ CONFIDENTIAL_RESTRICTED — Finance team and named executives only
+Financial reporting and unit economics terms for the Madgicx platform. Covers subscription revenue metrics, profitability measures, and investor reporting concepts. All assets in this domain are CONFI…
 
-| Term | Definition | Formula |
-|---|---|---|
-| `MRR` | Monthly Recurring Revenue — primary SaaS health metric | `sum(active_subscription_monthly_value)` |
-| `ARR` | Annual Recurring Revenue | `MRR * 12` |
-| `ChurnRate` | % of MRR lost in period | `(churned_mrr / starting_mrr) * 100` |
-| `CAC` | Customer Acquisition Cost | `total_sales_marketing_spend / new_customers_acquired` |
-| `LTV` | Customer Lifetime Value (SaaS) | `ARPU / churn_rate` |
-| `PaybackPeriod` | Months to recover CAC | `CAC / (ARPU * gross_margin)` |
-| `GrossMargin` | Revenue after COGS | `(revenue - cogs) / revenue * 100` |
+- `Finance.MRR` — Monthly Recurring Revenue. The predictable, normalised revenue generated from all active subscriptions in a given month.…
+- `Finance.ARR` — Annual Recurring Revenue. MRR multiplied by 12. Represents the annualised value of all active subscriptions. Used for in…
+- `Finance.ChurnRate` — The percentage of subscribers who cancel or do not renew their subscription within a given period. Calculated as (Churne…
+- `Finance.CAC` — Customer Acquisition Cost. The total sales and marketing spend required to acquire one new paying customer. Calculated a…
+- `Finance.LTV` — Customer Lifetime Value. The total revenue expected from a customer over their entire relationship with Madgicx. Calcula…
+- `Finance.PaybackPeriod` — The number of months required to recover the CAC from a customer's gross margin contribution. Calculated as CAC divided …
+- `Finance.GrossMargin` — The percentage of revenue remaining after deducting the cost of goods sold (infrastructure, hosting, third-party API cos…
+- `Finance.Chargebee` — The subscription billing system and sole authority for MRR at Madgicx. Provides a monthly view of MRR per subscription i…
+- `Finance.StripeSource` — The payment gateway and sole record of cash movement between customers and Madgicx. The balance_transactions table is th…
 
 ### HR
-⚠ CONFIDENTIAL_RESTRICTED — HR lead and C-suite only. Named-user grants.
+Human resources data concepts for the Madgicx organisation. Covers headcount, compensation, equity, and organisational structure terminology. All assets in this domain are CONFIDENTIAL_RESTRICTED — co…
 
-`Headcount` · `SalaryBand` · `EquityGrant` · `OrganisationalStructure`
+- `HR.Headcount` — The total number of active employees at Madgicx at a given point in time. Tracked by department, location, and employmen…
+- `HR.SalaryBand` — A defined range of compensation (minimum and maximum) for a specific role or job level at Madgicx. Salary bands ensure p…
+- `HR.EquityGrant` — A grant of company equity (options or restricted stock units) awarded to an employee as part of their compensation packa…
+- `HR.OrganisationalStructure` — The hierarchical reporting structure of the Madgicx organisation. Records manager-report relationships, department hiera…
 
 ### Operations
+Organisational operations and planning terms for the Madgicx platform. Covers OKR methodology, standard operating procedures, execution tracking, and operational governance concepts. Owned by the Oper…
 
-| Term | Definition |
-|---|---|
-| `OKR` | Objectives and Key Results. Quarterly cadence — company · team · individual |
-| `SOP` | Standard Operating Procedure. Versioned, owner-assigned, review-cadenced |
-| `ExecutionTicket` | Discrete work item in ClickUp/Linear. Audit trail from initiative to delivery |
-| `Roadmap` | Time-bounded initiative sequence. Quarterly review aligned to OKR cycle |
-| `InitiativeLifecycle` | IDEATION → PLANNING → IN_PROGRESS → REVIEW → COMPLETED → ARCHIVED |
+- `Operations.OKR` — Objectives and Key Results. A goal-setting framework used at Madgicx to align teams around measurable outcomes. An Objec…
+- `Operations.SOP` — Standard Operating Procedure. A documented step-by-step process defining how a recurring operational task should be perf…
+- `Operations.ExecutionTicket` — A structured work item representing a discrete operational task, feature request, or bug fix tracked in a project manage…
+- `Operations.Roadmap` — A time-bounded plan documenting the sequence of initiatives, features, and milestones Madgicx intends to deliver. Roadma…
+- `Operations.InitiativeLifecycle` — The end-to-end progression of a strategic initiative from ideation through delivery. Stages: IDEATION -> PLANNING -> IN_…
 
-**Stage → Artefact mapping** (grill-me lifecycle):
+### BusinessGoals
+The six strategic objectives that define how Madgicx measures whether something is worth building. Every initiative, product brief, architectural decision, and data asset should connect to at least on…
 
-| Stage | Gate condition | Grill-me artefact | Produces |
-|---|---|---|---|
-| `IDEATION` | Initiative identified from Roadmap | `default-brief` | Concept note — leadership accept/reject |
-| `PLANNING` | Brief approved | `default-prd` | Use cases · process flows · requirements bound to architecture |
-| `PLANNING` | PRD approved | `default-epic` | Deliverable components grouped for sprints |
-| `PLANNING` | PRD approved | `default-feature` | Concrete capabilities with functional spec |
-| `IN_PROGRESS` | Epic/Feature approved | `default-user-story` · `default-tech-story` | Engineering tickets |
-| `REVIEW` | Stories completed | `default-release-note` | What was delivered and why |
-| `COMPLETED` | Release reviewed | `default-white-paper` | Strategic or technical position document |
+- `BusinessGoals.OperationalEfficiency` — Ensure the right information reaches the right people at the right time — enabling informed decisions that reduce waste,…
+- `BusinessGoals.ProcessOptimisation` — Continuously refine workflows based on data-driven insights — analysing performance metrics, identifying bottlenecks, au…
+- `BusinessGoals.CustomerRetention` — Build a product customers love to interact with daily — one that fits seamlessly into their workflows and delivers measu…
+- `BusinessGoals.RevenueGrowth` — Revenue growth extends beyond retention. Data science supports product marketing by exposing key tools and insights as v…
+- `BusinessGoals.RiskMitigation` — Eliminate single-platform dependencies (e.g. Meta), build a fluid and adaptable product architecture, and maintain feedb…
+- `BusinessGoals.QualityOfService` — Consistent, reliable data, intelligence, and platform performance — 24/7. This covers system uptime, data accuracy, algo…
 
-**Handoff chain:**
-```
-Roadmap Initiative
-      ↓ upload: none (first in chain)
-default-brief    →  handoff block  →  default-prd
-default-prd      →  handoff block  →  default-epic · default-feature
-default-epic     →  handoff block  →  default-user-story · default-tech-story
-default-feature  →  handoff block  →  default-epic · default-user-story
-default-user-story / default-tech-story  →  default-release-note
-default-release-note  →  default-white-paper
-```
+### ValueStreams
+The three value streams that define how Madgicx delivers value to its stakeholders. Based on SAFe / Lean product thinking — a value stream is the sequence of steps that delivers value to a specific st…
 
-**Correction loops (upload prior artefact to revise):**
-- Feature reveals new complexity → upload Feature to Epic session → Epic scope revised
-- Epic scope changes → upload Epic to Feature session → Feature REQs revised
-- PRD changes → upload PRD to Feature/Epic → both revised
+- `ValueStreams.CustomerX` — The Customer Experience Value Stream. The external-facing product surface — every workflow a media buyer touches to mana…
+- `ValueStreams.OperX` — The Operational Excellence Value Stream. The internal-facing product surface — every AI & Data product that makes Madgic…
+- `ValueStreams.TrustX` — The Trusted AI & Data Foundation. Not a value stream beside the others — TrustX is the governed base that CustomerX and …
 
-**Architecture note:**
-Architecture is a fixed strategic foundation — not generated by grill-me. The systems
-(PRISM · θCortex · DataHub · AgentForge) are defined once at the strategy level and
-live in the datahub-facebook repository. Every grill-me artefact references the
-architecture from `governance-canonical.md` but never redefines it. A Brief or PRD
-describes how an initiative *uses* the existing architecture — not how to build new systems.
+### Workflows
+The primary product workflows fulfilling Madgicx 2.0 software services, bound by business value objectives. All 14 currently defined workflows belong to the CustomerX value stream. Three workflows (Tr…
 
----
+- `Workflows.Onboarding` — Onboarding Madgicx Users [onboarding]. Analyses and profiles new accounts to understand business model, validates tracki…
+- `Workflows.ChatWithData` — Chat with Data [chatwdata]. Universal conversational co-pilot for querying advertising performance, executing account ac…
+- `Workflows.MakingAds` — Making Ads with AI [makeads]. Generates creative variants, copy variations, and platform-optimised formats using AI base…
+- `Workflows.AdQueueManagement` — Ad Queue Management [adqueue]. Manages the pipeline of ads waiting to launch, schedules creative rotations, handles appr…
+- `Workflows.CreativeAnalysis` — Creative Analysis [creatives]. Detects creative fatigue, identifies winning elements, monitors competitive strategies, a…
+- `Workflows.ScalingAndExpanding` — Scaling and Expanding [scaling]. Identifies and scales winning campaigns, expands to new geographies and audiences, dete…
+- `Workflows.BudgetManagement` — Budget Management [budget]. Optimises daily budget pacing, implements margin-based bidding, prevents exhaustion, redistr…
+- `Workflows.AICommenter` — AI Commenter [commenter]. Automatically responds to ad comments, moderates harmful content, and extracts customer feedba…
+- `Workflows.CreatingCampaigns` — Creating Campaigns [campaigns]. Builds optimal campaign structures, configures audiences and delivery settings, launches…
+- `Workflows.Reporting` — Reporting [reporting]. Generates executive summaries, builds custom dashboards, creates attribution reports, and provide…
+- `Workflows.TrackingAndAttribution` — Tracking and Attribution [tracking]. Validates pixel implementation, optimises attribution windows, reconciles platform …
+- `Workflows.DataClassification` — Data Labeling and Classification [classification]. Tags campaigns by funnel stage, labels creative attributes and elemen…
+- `Workflows.AdAccountRestructuring` — Ad Account Restructuring [restructuring]. Audits and reorganises campaign structure to align with business goals, consol…
+- `Workflows.ActivityLog` — Activity Logs [activity]. The system memory and audit trail — tracks everything that happens and why. Provides the audit…
+- `Workflows.MadgicxBI` — Madgicx Business Intelligence [madgicxbi]. Unified analytics layer providing cross-channel performance visibility, custo…
+- `Workflows.EngineeringDocumentation` — Engineering Documentation Management [engdocs]. AI-governed documentation co-pilot that eliminates manual document autho…
 
-## Tech Stack
-<!-- Source: tech-stack.yml v0.3 — GitHub / datahub-facebook project -->
+### DataSources
+Catalogue of all external and internal data sources that feed the Madgicx platform. Each term documents the source's domain ownership, group, policy classification, warehouse statistics, and strategic…
 
-### Architecture Overview
+- `DataSources.MetaAdsAPI` — Data directly from Meta's advertising platforms (Facebook and Instagram) via the Marketing API. Covers campaign performa…
+- `DataSources.MadgicxAuxiliaryAdData` — Proprietary data gathered from external sources outside official APIs. Covers competitor ads, offers, product catalogues…
+- `DataSources.GoogleAdsAPI` — Data imported from Google's advertising platforms (Search, Display, YouTube) via the Google Ads API. Includes clicks, co…
+- `DataSources.GoogleAnalyticsGA4` — Website user behaviour and conversion data via GA4 BigQuery export. Provides traffic sources, user engagement (session d…
+- `DataSources.ShopifySource` — Direct connection to client Shopify stores pulling product, customer, and order data — product IDs, titles, prices, inve…
+- `DataSources.KlaviyoSource` — Connection to client Klaviyo accounts providing email and SMS marketing performance, customer segments, and lifecycle st…
+- `DataSources.TikTokAdsAPI` — API-led connection to TikTok Ads Manager pulling campaign, ad group, and ad performance data — impressions, clicks, spen…
+- `DataSources.MadgicxActivityLogs` — Internal PostgreSQL production database — the product's own operational database and the largest data input at approxima…
+- `DataSources.IntercomSource` — Customer support data from Intercom covering contacts, conversations, and companies. Core tables: conversations (254,401…
+- `DataSources.LangfuseSource` — AI agent tracing and evaluation platform. Planned to provide full AgentTrace records per θCortex agent run — prompt inpu…
+- `DataSources.ClickUpSource` — Support tickets and feature requests from ClickUp. Planned to provide execution ticket data linking operational decision…
 
-```
-GOVERNANCE (above everything)
-  DataHub — SSOT · GitHub/datahub-facebook · generates governance-canonical.md
-        │
-        ▼ governs both
-        │
-PRISM ──────────────────────────────────────────────────────────────────────────
-Platform for Real-time Ingestions, Semantics, and Modeling
-  Ingestion        Debezium · BentoS · RabbitMQ
-  Semantics        Redpanda · Avro schema registry
-  Modeling         GCS L0-L2 (L1 Standardized · L2 Normalised/Hive-partitioned) · BigQuery L3 (Certified)
-  Orchestration    Temporal (PRISM saga service)
-  Observability    Pipeline health → feeds DataHub
-  Serving Layer    FastAPI · Kong · JWT · MCP servers
-        │
-        ▼ consumes PRISM capabilities
-        │
-θCortex ────────────────────────────────────────────────────────────────────────
-Intelligence & Product Layer — ALL data products delivered here
-  Agentic          AgentForge · LangChain · Langfuse
-  Retrieval        Chroma (RAG / vector store)
-  Models           Model-agnostic · selected per use case
-  Augmented BI     Apache Superset → BigQuery L3
-        │
-        ▼ delivers to
-        │
-CustomerX workflows (14) · OperX workflows (engdocs · madgicx-bi · future)
-
-PLATFORM OBSERVABILITY (cross-cutting across PRISM + θCortex)
-  OpenTelemetry · Jaeger · Grafana → feeds DataHub quality signals
-
-FRONTEND
-  ReactJS widget framework — AI-rendered interactive UI
-```
-
----
-
-### Governance Layer
-
-**DataHub** — Single Source of Truth for all data and AI product governance.
-Governs domain ownership, business glossary, data lineage, and asset metadata
-across both PRISM and θCortex. Sits above the data fabric — not part of it.
-
-- **Repository:** GitHub / datahub-facebook project
-- **Generates:** `governance-canonical.md` via CI/CD pipeline from yml source files
-- **Data quality:** Pulls timeliness, availability, and freshness signals from Grafana/OpenTelemetry — OTEL captures, DataHub governs
-- **CI/CD status:** In progress — not yet fully active
-- **MCP integration:** Planned future phase — MCP-triggered regeneration on commit
-
-> Do not edit `governance-canonical.md` directly. Edit yml source files in the
-> datahub-facebook repository and trigger CI/CD to regenerate.
-
----
-
-### PRISM — Platform for Real-time Ingestions, Semantics, and Modeling
-
-The Madgicx data fabric infrastructure. Owns the full data lifecycle and provides
-the capabilities θCortex consumes to deliver data products.
-
-**Cloud:** Google Cloud Platform (GCP) — GCP-native
-**Activity log:** `activity_logs__prism_pipeline_activity`
-**Alerts:** `signals_and_alerts__prism_pipeline_alerts`
-
-#### Ingestion
-
-| Component | Role |
-|---|---|
-| **Debezium** | Change Data Capture (CDC) from PostgreSQL. Produces `CDCEvent` streams in Avro/JSON |
-| **BentoS** | Webhook-based event ingestion for real-time API-push sources |
-| **RabbitMQ** | Message broker. Routes events between ingestion, pipeline stages, and consumers |
-
-#### Semantics — Schema Registry
-Schema-first discipline — all data contracts registered before any pipeline or product is built.
-
-| Component | Role |
-|---|---|
-| **Redpanda** | External schema registry. Manages Avro schema versions and compatibility |
-| **Apache Avro** | Schema format for all structured event streams and pipeline contracts |
-
-> Any new pipeline or data product spec must register its schema first.
-
-#### Modeling — Storage Tiers
-
-| Tier | Name | Description | Storage |
-|---|---|---|---|
-| L0 | Raw | As-is from source. Unmodified | GCS |
-| L1 | Standardized | Schema-validated, format-standardised. Avro/Parquet | GCS |
-| L2 | Normalised | Cleaned, deduplicated, normalised. **Hive-partitioned** (e.g. by account ID). Wildcard/glob patterns required for DataHub crawlers — avoid hardcoding partition values | GCS |
-| L3 | Certified — Warehouse & Data Marts | Aggregated, modelled, certified. Serves θCortex data products and Superset. **Storage: BigQuery** | BigQuery |
-
-> **dbt not used** — all L0→L3 transformations run exclusively via Temporal sagas (PRISM service).
-> Any feature spec or design referencing dbt should be flagged as incorrect.
+### PlatformCapabilities
+The canonical catalogue of all Madgicx platform capabilities. Each term maps to a PLAT-CAP-ID and defines what the capability does, which service layer it belongs to, and how it connects to the value …
 
 #### Orchestration
+Platform capabilities responsible for sequencing, executing, and routing work across services, pipelines, and external APIs. Covers agent orchestration, durable workflow execution, API gateway, data i…
 
-**Temporal** — Saga orchestration service within PRISM. Not a standalone system.
-Drives all pipeline transformations (L0→L3) and θCortex workflow execution.
-Every multi-step data or agent workflow must define its Temporal saga before build.
-Activity log: `activity_logs__cortex_automation_activity`
+- `PlatformCapabilities.Orchestration.AgentForge` — PLAT-CAP-01. Multi-step AI agent orchestration — sequencing, memory, and compound workflows. The runtime that executes θ…
+- `PlatformCapabilities.Orchestration.TemporalOrchestration` — PLAT-CAP-02. Durable workflow execution — long-running, retryable, stateful process pipelines. Powers PRISM sagas (L0→L3…
+- `PlatformCapabilities.Orchestration.KongAPIGateway` — PLAT-CAP-03. API traffic management, authentication, and rate limiting between Madgicx services and external providers. …
+- `PlatformCapabilities.Orchestration.MCPTool` — PLAT-CAP-04. Model Context Protocol tool. Connects Claude to live Madgicx or third-party data at runtime during agent ex…
+- `PlatformCapabilities.Orchestration.Fetcher` — PLAT-CAP-05. Structured ingestion framework implementing the L0→L3 pipeline — raw API landing through domain-modelled ce…
+- `PlatformCapabilities.Orchestration.ActionExecutor` — PLAT-CAP-06. Carries out approved ad actions — pauses, budget changes, bid adjustments, and launches — against the ad pl…
+- `PlatformCapabilities.Orchestration.DataFabric` — PLAT-CAP-07. Semantic integration layer wiring data sources to governed domain outputs. Implemented via DataHub as the m…
+- `PlatformCapabilities.Orchestration.CDC` — PLAT-CAP-08. Real-time row-level change streaming from operational databases via Debezium. Captures inserts, updates, an…
+- `PlatformCapabilities.Orchestration.ReverseETL` — PLAT-CAP-09. Syncs warehouse outputs back to operational tools — CRM, ad platforms, and support systems. Enables warehou…
 
-#### Pipeline Observability
-PRISM-level pipeline health — distinct from platform observability (OpenTelemetry/Jaeger).
-Monitors connector health, ingestion SLAs, DLQ thresholds, data freshness per domain.
-Produces `signals_and_alerts__prism_pipeline_alerts` · Feeds timeliness signals to DataHub.
+#### AIIntelligence
+Platform capabilities delivering AI-powered intelligence to users and internal systems. Covers conversational AI, Claude skills, and the four ML model types (predictive, prescriptive, descriptive, dia…
 
-#### Serving Layer
-Data access and consumption layer within PRISM. All access to θCortex data products
-routes through this layer — no direct BigQuery or GCS access from agents or workflows.
+- `PlatformCapabilities.AIIntelligence.AICopilot` — PLAT-CAP-10. User-facing conversational AI — natural language query and recommendation. The CustomerX Chat with Data wor…
+- `PlatformCapabilities.AIIntelligence.ClaudeSkills` — PLAT-CAP-11. Structured prompt playbooks — documentation and structured output generation. Skills encode governance rule…
+- `PlatformCapabilities.AIIntelligence.PredictiveModels` — PLAT-CAP-12. Trained predictive and classification models. Covers fatigue scoring, churn prediction, bid optimisation, a…
+- `PlatformCapabilities.AIIntelligence.PrescriptiveModels` — PLAT-CAP-13. Optimisation models that recommend or autonomously execute the best next action — budget reallocation, bid …
+- `PlatformCapabilities.AIIntelligence.DescriptiveModels` — PLAT-CAP-14. Summarise what has happened — aggregating performance history, spend patterns, and engagement trends into i…
+- `PlatformCapabilities.AIIntelligence.DiagnosticModels` — PLAT-CAP-15. Identify why something happened — root cause analysis, anomaly attribution, and correlation detection acros…
+- `PlatformCapabilities.AIIntelligence.LangfuseTracing` — PLAT-CAP-16. AI observability — traces, evaluations, latency, and quality monitoring per agent run. Every AgentForge exe…
 
-| Component | Role |
-|---|---|
-| **FastAPI** | Primary Python API framework. Exposes PRISM data products to θCortex and integrations |
-| **Kong Gateway** | API gateway. Routing, authentication (JWT), rate limiting, observability |
-| **JWT** | Authentication standard across all API services via Kong |
-| **MCP Servers** | Model Context Protocol — structured intent/capability interface for θCortex value stream workflows |
+#### DataStorage
+Platform capabilities defining how and where data is stored across the Madgicx stack. Covers the central data warehouse, subdomain data marts, ML feature store, and semantic layer. Each capability map…
 
-**MCP Servers — live:**
+- `PlatformCapabilities.DataStorage.DataWarehouse` — PLAT-CAP-17. Central historical store in BigQuery — ML training, trend analysis, and heavy aggregation. Holds L3-certifi…
+- `PlatformCapabilities.DataStorage.DataMart` — PLAT-CAP-18. Subdomain-scoped query-optimised store for reporting, dashboards, and analytical steps. Implemented as BigQ…
+- `PlatformCapabilities.DataStorage.FeatureStore` — PLAT-CAP-19. Curated ML-ready feature sets — serves low-latency features to models at inference time and point-in-time c…
+- `PlatformCapabilities.DataStorage.SemanticLayer` — PLAT-CAP-20. Consistent business metric definitions across all consumers — single authoritative definition of ROAS, MRR,…
 
-| Server | Value Stream | Domain / Workflow |
-|---|---|---|
-| Facebook Ads | CustomerX | `social_marketing` |
-| Google Analytics | CustomerX | `social_marketing` |
-| ClickUp | OperX | `engdocs` workflow |
-| Shopify | CustomerX | `social_marketing__ecommerce` |
-| Slack · Gmail · Notion · Linear · Figma | Both | — |
-| HubSpot · Intercom · Miro · Asana · Atlassian | Both | — |
-| monday.com · Webflow · Supermetrics · Fireflies | Both | — |
+#### Governance
+Platform capabilities enforcing data governance, quality, and access control across the Madgicx stack. Covers the DataHub metadata catalogue, automated data quality engine, and policy tag enforcement …
 
----
+- `PlatformCapabilities.Governance.DataHubGovernance` — PLAT-CAP-21. Metadata catalogue, lineage, ownership, and policy enforcement. DataHub OSS 0.13.1 is the governance backbo…
+- `PlatformCapabilities.Governance.DataQualityEngine` — PLAT-CAP-22. Automated schema, freshness, and anomaly checks on pipeline outputs. Runs after each L2→L3 promotion step. …
+- `PlatformCapabilities.Governance.PolicyTagEnforcement` — PLAT-CAP-23. Runtime access control tied to DataHub policy tag classifications. Sensitivity and PII tags applied in Data…
 
-### θCortex — Intelligence & Product Layer
+#### Serving
+Platform capabilities that deliver data, insights, and actions to end users and downstream systems. Covers self-serve analytics, frontend widgets, the Data API, alerting, and omnichannel delivery.
 
-Consumes PRISM capabilities — storage, Temporal, serving layer — to implement
-Madgicx-specific value stream workflows, intents, and capabilities.
-**All data products are delivered through θCortex — never directly from PRISM.**
+- `PlatformCapabilities.Serving.SupersetAnalytics` — PLAT-CAP-24. Self-serve BI, dashboards, and alert threshold configuration via Apache Superset. Consumes from the Data Ma…
+- `PlatformCapabilities.Serving.FEWidget` — PLAT-CAP-25. Frontend UI component that surfaces data or triggers a user-confirm action within the Madgicx product. Cons…
+- `PlatformCapabilities.Serving.DataAPI` — PLAT-CAP-26. Programmatic access layer exposing domain data as versioned REST or GraphQL endpoints. Consumed by FE widge…
+- `PlatformCapabilities.Serving.AlertingAndNotification` — PLAT-CAP-27. Threshold-based and anomaly-driven alerts delivered to users or downstream systems. Consumes signals from t…
+- `PlatformCapabilities.Serving.Omnichannel` — PLAT-CAP-28. Unified delivery of alerts, insights, and recommendations across all customer touchpoints — in-app, email, …
 
-**Built on:** PRISM · **Orchestration:** Temporal (PRISM service)
-**Activity log:** `activity_logs__cortex_automation_activity`
-**Alerts:** `signals_and_alerts__cortex_data_quality_alerts`
-**Delivers to:** CustomerX (14 workflows) · OperX (engdocs · madgicx-bi · future)
 
-#### Agentic Framework
+### DataWarehouseArchitecture
+The value-stream-scoped BigQuery data warehouse architecture for the Madgicx platform. Three warehouse datasets exist within the BigQuery project — one per value stream (CustomerX, OperX, TrustX) — ea…
 
-| Component | Role |
-|---|---|
-| **AgentForge** | Madgicx proprietary agentic framework. Spec-driven — behaviour, triggers, validation, and handoff contracts defined before build. Built on LangChain. Traced via Langfuse. TrustX: all agents satisfy `ai_trust` contract |
-| **LangChain** | Agent orchestration and tool-use framework underlying AgentForge |
-| **Langfuse** | AI agent tracing and evaluation. Full `AgentTrace` per run. Domain: `activity_logs__ai_langfuse_traces`. Retention: 90d hot · 1yr cold. TrustX primary AI enforcement tool |
-| **Chroma** | Vector store (RAG). Agent context retrieval — governance-canonical.md, ClickUp index, domain knowledge |
+#### CustomerXWarehouse
+The CustomerX value stream warehouse — the primary analytical store for all external-facing product data. Contains all ad performance, ecommerce, creative, audience, attribution, and signals data used…
 
-> No agent is built without a defined AgentForge spec. Spec is a required PRD artefact.
+- `DataWarehouseArchitecture.CustomerXWarehouse.AccountIntelligence` — Subdomain: account-level intelligence combining static and dynamic data. Static layer: account details, industry classif…
+- `DataWarehouseArchitecture.CustomerXWarehouse.AudienceInsights` — Subdomain: audience composition, overlap, and performance data. Covers custom audience sizes, lookalike similarity distr…
+- `DataWarehouseArchitecture.CustomerXWarehouse.AlertsAndAnomalies` — Subdomain: alert history and anomaly detection outputs. Stores threshold breach events, anomaly signals, SLA breach reco…
+- `DataWarehouseArchitecture.CustomerXWarehouse.ActivityInsights` — Subdomain: user and platform activity analytics derived from the Madgicx Activity Logs source. Covers feature adoption, …
+- `DataWarehouseArchitecture.CustomerXWarehouse.BudgetAndPacing` — Subdomain: budget allocation, daily pacing, and spend velocity data. Tracks budget utilisation rates, pacing deviation f…
+- `DataWarehouseArchitecture.CustomerXWarehouse.AttributionAndConversion` — Subdomain: conversion attribution data across all platforms and models. Holds click-through and view-through conversion …
+- `DataWarehouseArchitecture.CustomerXWarehouse.CompetitorIntelligence` — Subdomain: competitive intelligence derived from the Madgicx Auxiliary Ad Data source. Covers competitor ad creative ana…
+- `DataWarehouseArchitecture.CustomerXWarehouse.WebAppAnalytics` — Subdomain: website and app user behaviour data from GA4 BigQuery export. Covers session events, traffic sources, user en…
+- `DataWarehouseArchitecture.CustomerXWarehouse.ProductCatalogAndInventory` — Subdomain: Shopify product catalogue and inventory data. Covers product IDs, titles, variants, pricing, inventory levels…
+- `DataWarehouseArchitecture.CustomerXWarehouse.FirmographicAndIntent` — Subdomain: firmographic, technographic, and intent signal data enriching ad account and customer profiles. Covers indust…
+- `DataWarehouseArchitecture.CustomerXWarehouse.Metadata` — Subdomain: platform metadata and configuration reference data. Covers DataHub entity metadata snapshots, pipeline config…
+- `DataWarehouseArchitecture.CustomerXWarehouse.ABTestingAndExperiments` — Subdomain: A/B test assignment, variant performance, and experiment result data. Covers test configurations, traffic spl…
+- `DataWarehouseArchitecture.CustomerXWarehouse.ExternalFactors` — Subdomain: external market signals that contextualise ad performance — seasonality indices, public holidays by market, e…
+- `DataWarehouseArchitecture.CustomerXWarehouse.CustomerCRMAndRevenue` — Subdomain: customer identity, purchase history, and revenue data combining Shopify customer records, Klaviyo engagement …
 
-#### Models
-Model-agnostic — selected per use case and capability. Multi-model routing strategy in place.
+#### OperXWarehouse
+The OperX value stream warehouse — holds internal operational and engineering data supporting Madgicx teams. Covers engineering documentation metadata, execution ticket analytics, OKR tracking data, a…
 
-#### Augmented BI
-**Apache Superset** — Visual analytics and internal dashboarding. Connects to BigQuery (L3).
-Part of the θCortex intelligence layer — not a platform observability tool.
+- `DataWarehouseArchitecture.OperXWarehouse.EngineeringOps` — Subdomain: engineering operations data — documentation metadata, code review patterns, deployment frequency, and inciden…
 
----
+#### TrustXWarehouse
+The TrustX value stream warehouse — holds governance, quality, observability, and compliance data. Not customer-facing ad performance data. Covers Data Quality Engine outputs, OTEL traces, CDC event a…
 
-### Platform Observability
-Cross-cutting across all PRISM and θCortex services. Distinct from PRISM pipeline observability.
-**TrustX requirement:** All services and agents must instrument OpenTelemetry before production.
+- `DataWarehouseArchitecture.TrustXWarehouse.DataQualityResults` — Subdomain: outputs from the Data Quality Engine (PLAT-CAP-22). Stores per-pipeline DQ check results — schema validation …
+- `DataWarehouseArchitecture.TrustXWarehouse.PipelinePerformance` — Subdomain: ingestion pipeline health and performance metrics. Covers Temporal workflow execution times, Fetcher run dura…
+- `DataWarehouseArchitecture.TrustXWarehouse.AuditAndCompliance` — Subdomain: immutable audit trail records for compliance and governance reporting. Covers ad action execution records (in…
+- `DataWarehouseArchitecture.TrustXWarehouse.OTELTraces` — Subdomain: OpenTelemetry infrastructure traces covering service latency, error rates, and distributed tracing across the…
 
-| Component | Role |
-|---|---|
-| **OpenTelemetry** | Instrumentation standard. Traces, metrics, logs across all services. Mandatory for all new services |
-| **Jaeger** | Distributed tracing. Request-level performance debugging across microservices |
-| **Grafana** | Monitoring dashboards and alerting. Feeds timeliness/availability signals to DataHub |
+#### CustomerXMart
+The CustomerX Data Mart — subdomain-scoped BigQuery materialised views and purpose-built tables derived from customerx_warehouse. Optimised for fast dashboard and API queries. Serves Superset, FE widg…
 
----
+- `DataWarehouseArchitecture.CustomerXMart.AdPerformanceMart` — Materialised view layer for ad performance dashboards. Pre-aggregates daily and weekly campaign, ad set, and ad metrics …
+- `DataWarehouseArchitecture.CustomerXMart.CustomerRevenueMart` — Materialised view layer for customer revenue and CLV reporting. Pre-joins Shopify order data with ad attribution records…
 
-### Frontend
+#### CustomerXFeatureStore
+The CustomerX Feature Store — curated ML-ready feature sets serving low-latency features to predictive and prescriptive models at inference time, and point-in-time correct features for model training.…
 
-**ReactJS Widget Framework** — AgentForge agents render ReactJS widgets directly in the
-interface. Interactive, data-driven UI without traditional frontend deployment cycles.
-Used across CustomerX and OperX value stream interfaces.
+- `DataWarehouseArchitecture.CustomerXFeatureStore.AccountPerformanceFeatures` — Feature set: account-level performance signals for churn prediction and bid optimisation models. Covers rolling 7d/30d/9…
+- `DataWarehouseArchitecture.CustomerXFeatureStore.CreativeFatigueFeatures` — Feature set: creative-level fatigue signals for the fatigue scoring model. Covers frequency progression, CTR decay rate …
 
-> PRDs proposing new UI capabilities must specify: ReactJS widget framework or traditional build.
 
----
 
-### Engineering Culture
+## Asset Registry
 
-| Principle | Detail |
-|---|---|
-| Primary language | Python |
-| Philosophy | Open source first — prefer open source before proprietary |
-| Schema discipline | Schema-first — all data contracts registered before build |
-| Agent discipline | Spec-first — all AgentForge agents specced before build |
-| UI capability | AI-rendered ReactJS widgets |
-| Infrastructure as code | Not in use |
-| CI/CD | In progress — not yet fully active |
+Real confirmed BigQuery tables in governed scope. L0 excluded by policy.
 
----
+**BigQuery project:** `madgicx-development`
 
-## How Skills Use This File
+### Source: `meta_activity_logs`
 
-### All skills — on load
-1. Read this file once before generating any output
-2. Use canonical terms from the Glossary — never platform-specific equivalents
-3. Map any proposal to its value stream (CustomerX / OperX) before proceeding
-4. Check business objective alignment against the top-3 ranking convention
-5. Verify technical fit against the Tech Stack — check if a capability already exists
+**`activity-logs-staging.activity_log_events`**
+URN: `urn:li:dataset:(urn:li:dataPlatform:bigquery,madgicx-development.activity-logs-staging.activity_log_events,PROD)`
+Domain: `activity_logs__ad_provider_activity_logs` | Tier: L1_STANDARDIZED | Env: STAGE
+L1 standardised activity log events from the Meta Ads API activity log endpoint. Records platform-side events including campaign status changes, budget modifications, audience updates, and API-reporte…
+Upstream: none (L1 lineage start)
+Glossary terms: `DataSources.MetaAdsAPI`, `PlatformCapabilities.Orchestration.Fetcher`, `PlatformCapabilities.Orchestration.TemporalOrchestration`, `ActivityLogs.RetentionTier`, `DataGovernance.IngestionHealth.DataFreshness`, `DataGovernance.IngestionHealth.APIRateLimit`
 
-### grill-me
-The grill-me skill uses this file for any structured design process — not only
-product briefs. Any artefact that requires leadership acceptance or governance
-sign-off should go through grill-me grounded in this context. Examples:
+**`activity-logs-production.activity_log_events`**
+URN: `urn:li:dataset:(urn:li:dataPlatform:bigquery,madgicx-development.activity-logs-production.activity_log_events,PROD)`
+Domain: `activity_logs__ad_provider_activity_logs` | Tier: L2_NORMALIZED | Env: PROD
+L2 normalised activity log events from the Meta Ads API — the production source of truth for ad provider activity. Derived from activity-logs-staging.activity_log_events via the PRISM normalisation an…
+Upstream: `urn:li:dataset:(urn:li:dataPlatform:bigquery,madgicx-development.activity-logs-staging.activity_log_events,PROD)`
+Glossary terms: `DataSources.MetaAdsAPI`, `PlatformCapabilities.Orchestration.Fetcher`, `PlatformCapabilities.Orchestration.TemporalOrchestration`, `ActivityLogs.ActionExecution`, `ActivityLogs.RetentionTier`, `DataGovernance.IngestionHealth.DataFreshness`
 
-| Artefact | Value Stream | Notes |
-|---|---|---|
-| Concept Note / Product Brief | CustomerX or OperX | First gate — is this worth building? |
-| PRD | CustomerX or OperX | Second gate — what exactly are we building? |
-| Epic | CustomerX or OperX | Derived from approved PRD |
-| Release Note | CustomerX or OperX | Documents what was delivered and why |
-| White-paper | Either | Strategic or technical position document |
-| Initiative proposal | Either | Connects to OKR before progressing |
 
-For each artefact type grill-me loads this file, identifies the value stream,
-checks objective alignment, verifies technical fit, and grills on the specific
-anchors relevant to that artefact — before generating the output.
+## Tag Vocabulary
 
-### AgentForge agents and skill.md files
-Any agent or skill that generates Madgicx artefacts — documents, specs, analyses,
-recommendations — loads this file to ensure outputs are grounded in canonical
-terminology, correct domain ownership, and the right value stream context.
+Only these tags may be applied to assets in `assets.yaml`.
+
+### Technical Tags
+
+**FormatAndStructure**
+- `data_format__JSON` — Format: JSON. Semi-structured. Common for API responses from Meta, Google, Shopify, Klaviyo. Schema …
+- `data_format__Parquet` — Format: Apache Parquet (columnar). Optimized for BigQuery analytical queries. Used for L2+ processed…
+- `data_format__CSV` — Format: CSV. Flat structure. Common for manual batch uploads and legacy exports. Risk: schema_drift,…
+- `data_format__Avro` — Format: Apache Avro (row-based with embedded schema). Used for PRISM CDC streaming via Debezium. Sch…
+
+**FreshnessAndScheduling**
+- `update_frequency__REAL_TIME` — Freshness: Real-time via streaming (Debezium CDC, Kafka, webhook). Expected latency: <5 minutes. SLA…
+- `update_frequency__ON_EXTERNAL_EVENT` — Freshness: Triggered by external event (Shopify webhook, Klaviyo update). Not on fixed schedule. θCo…
+- `update_frequency__HOURLY` — Freshness: Refreshed once per hour. Expected latency: 60 min ± overhead. SLA tier: GOLD. Typical for…
+- `update_frequency__DAILY` — Freshness: Refreshed once per day (02:00-05:00 UTC). Expected latency: 24h. SLA tier: SILVER. Standa…
+- `update_frequency__WEEKLY` — Freshness: Refreshed once per week. Expected latency: 7 days. SLA tier: BRONZE. Used for aggregated …
+- `update_frequency__ON_DEMAND` — Freshness: Manual or ad-hoc refresh. No automated SLA applies. Used for historical loads, migrations…
+- `refresh_window__15m` — SLA window: 15 minutes. Alerts fire in signals_and_alerts domain if no update received. Paired with:…
+- `refresh_window__1h` — SLA window: 1 hour. Standard for hourly ad performance pipelines. Paired with: update_frequency__HOU…
+- `refresh_window__24h` — SLA window: 24 hours. Grafana alerts after 26h (retry buffer included). Paired with: update_frequenc…
+- `refresh_window__7d` — SLA window: 7 days. Lowest freshness SLA in the platform. Paired with: update_frequency__WEEKLY.
+
+**OwnershipAndEnvironment**
+- `owner_team__DEVX_DATA` — Owner: DevX Data team (devx-data). Responsible for data wrangling, pipeline reliability, schema mana…
+- `owner_team__CORE_UI_UX` — Owner: CORE UI/UX team (core-ui-ux). Covers Creative Library domain data, AI agent output datasets, …
+- `owner_team__CUSTOMER_SUCCESS` — Owner: Marketing and Customer Success team (customer-success). Covers Customer Success domain includ…
+- `owner_team__FINANCE_HR` — Owner: Finance and HR team (finance-hr). Covers P&L, payroll, equity, and subscription revenue. All …
+- `owner_team__OPERATIONS` — Owner: Operations team (operations). Covers OKRs, SOPs, roadmaps, and execution tickets from ClickUp…
+- `environment__DEV` — Environment: Development. Synthetic or sampled data. Never joins production pipelines. BigQuery IAM:…
+- `environment__TEST` — Environment: Test/QA. Anonymized or masked data. Used for integration testing and DQ check validatio…
+- `environment__STAGE` — Environment: Staging. Real data with restricted access. Used for pre-production validation and stake…
+- `environment__PROD` — Environment: Production. Live data for operational reporting, AI inference, executive dashboards, cu…
+
+**QualityAndLifecycle**
+- `data_quality_tier__TIER_1_RAW` — Quality: TIER_1_RAW. Raw, unverified data — no quality checks applied. usage_permission=EXPLORATORY_…
+- `data_quality_tier__TIER_2_VERIFIED` — Quality: TIER_2_VERIFIED. Passed automated DQ checks (schema, null rate, referential integrity, busi…
+- `data_quality_tier__TIER_3_CERTIFIED` — Quality: TIER_3_CERTIFIED. All quality gates passed + devx-data steward sign-off + cross-source reco…
+- `processing_stage__L0_RAW` — Stage: L0_RAW. Raw ingestion state — no transformations applied. Stored in PRISM raw zone. DataHub l…
+- `processing_stage__L1_STANDARDIZED` — Stage: L1_STANDARDIZED. Standardized by PRISM — snake_case fields, types enforced, UTC timestamps, p…
+- `processing_stage__L2_NORMALIZED` — Stage: L2_NORMALIZED. Normalized and enriched — business rules applied, derived metrics calculated (…
+- `processing_stage__L3_WAREHOUSED` — Stage: L3_WAREHOUSED. Fully processed and loaded into BigQuery by PRISM. Partitioned, clustered, Big…
+- `dq_enabled__TRUE` — DQ: Active via θCortex data quality alerts pipeline. Checks: schema, null rate, row count anomaly, r…
+- `dq_enabled__FALSE` — DQ: No automated checks active. Treated as TIER_1_RAW regardless of other tags. AI agents exclude th…
+
+**SourceAndLineage**
+- `source_system__META_ADS_API` — Source: Meta (Facebook) Marketing API. Includes campaign, ad set, ad, and insights data via Graph AP…
+- `source_system__GOOGLE_ADS_API` — Source: Google Ads API (GAQL). Includes campaign, ad group, keyword, and performance metrics. Trust:…
+- `source_system__MADGICX_PLATFORM` — Source: Internal Madgicx platform — PostgreSQL database, PRISM pipelines, θCortex orchestration outp…
+- `source_system__SHOPIFY_API` — Source: Shopify Admin REST or GraphQL API. Includes orders, products, customers, and refunds. Trust:…
+- `source_system__KLAVIYO_API` — Source: Klaviyo REST API. Includes email campaign metrics, flow performance, subscriber lists, and r…
+- `source_system__EXTERNAL_SCRAPING` — Source: Web scraping of external sources (competitor ad libraries, public datasets, social media sig…
+- `extraction_method__API_PULL` — Extraction: Active REST/GraphQL API call on scheduled or event-driven basis. Reliability: HIGH. Fail…
+- `extraction_method__WEB_SCRAPE` — Extraction: Programmatic web page content extraction. Reliability: LOW. Always results in TIER_1_RAW…
+- `extraction_method__BATCH_UPLOAD` — Extraction: Bulk file transfer (CSV, Parquet, JSON, Avro). Reliability: MEDIUM. Common for historica…
+- `extraction_method__CDC_STREAM` — Extraction: Change Data Capture streaming via PRISM/Debezium. Records row-level inserts, updates, an…
+
+### Policy Tags
+
+**BusinessCriticality**
+- `criticality__HIGH` — Criticality: HIGH (P1). Underpins core business operations — ROAS reporting, Shopify order data, liv…
+- `criticality__MEDIUM` — Criticality: MEDIUM (P2). Supports important but non-critical functions — weekly performance summari…
+- `criticality__LOW` — Criticality: LOW (P3). Supports analytical exploration and development with no production dependenci…
+
+**PIIClassification**
+- `pii__DIRECT_IDENTIFIER` — PII: DIRECT IDENTIFIER. Contains data that directly identifies an individual — name, email, phone, g…
+- `pii__INDIRECT_IDENTIFIER` — PII: INDIRECT IDENTIFIER. Contains data that can identify individuals when combined — customer IDs, …
+- `pii__FINANCIAL_SENSITIVE` — PII: FINANCIAL SENSITIVE. Contains financial data linked to identifiable clients or individuals — ad…
+- `pii__NOT_PII` — PII: NOT PII. Confirmed to contain no personal data. Aggregated, anonymised, or purely operational d…
+
+**RetentionPolicy**
+- `retention__30_DAYS` — Retention: 30 days then deleted or archived. Applied to transient staging data, API response buffers…
+- `retention__90_DAYS` — Retention: 90 days. Applied to AI agent traces (Langfuse hot storage) and operational activity logs.…
+- `retention__1_YEAR` — Retention: 1 year. Standard for curated ad performance data and campaign analytics. Aligns with busi…
+- `retention__7_YEARS` — Retention: 7 years. Applied to financial records, compliance audit trails, and GDPR data subject req…
+- `retention__INDEFINITE` — Retention: Indefinite. Applied to immutable audit trails (ad action execution records) and source ar…
+
+**SensitivityClassification**
+- `sensitivity__CONFIDENTIAL_SOURCE_SYSTEM` — Sensitivity: CONFIDENTIAL - SOURCE SYSTEM (P0 — most restricted). Applied to raw API responses gover…
+- `sensitivity__CONFIDENTIAL_OPERATIONAL` — Sensitivity: CONFIDENTIAL - OPERATIONAL (P1). Applied to client financial performance data and clien…
+- `sensitivity__INTERNAL_USE_ONLY` — Sensitivity: INTERNAL USE ONLY (P2). Applied to curated operational data for internal reporting and …
+- `sensitivity__PUBLIC` — Sensitivity: PUBLIC (P3 — least restricted). Applied to non-sensitive standard advertising metrics w…
+
