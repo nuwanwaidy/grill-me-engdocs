@@ -1,7 +1,7 @@
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
-<!-- Source: madgicx/datahub config/ directory -->
-<!-- Generated: 2026-06-19 05:25 UTC -->
-<!-- Commit: 1266f7254a31e6ce4dd66bcc5150a7d51f32c770 -->
+<!-- Source: mdx-gov-hub canonical/ and data/ directories -->
+<!-- Generated: 2026-07-01 13:45 UTC -->
+<!-- Commit: 64ea91c82f82a821020f4abd71ee222d92b7e967 -->
 <!-- Glossary: v0.3 | Domains: v0.3 -->
 
 # Madgicx Governance Canonical
@@ -11,11 +11,11 @@ Every initiative brief, epic, feature spec, and PRD must align to the
 terminology, value streams, and architecture documented here.
 
 Generated deterministically from:
-- `config/glossary/glossary.yaml` (v0.3)
-- `config/domains/domains.yaml` (v0.3)
-- `config/pipelines/assets.yaml`
-- `config/tags/technical_tags.yaml`
-- `config/tags/policy_tags.yaml`
+- `canonical/business/business.yaml` (v0.3)
+- `data/domains/domains.yaml` (v0.3)
+- `data/assets/assets.yaml`
+- `data/tags/technical_tags.yaml`
+- `data/tags/policy_tags.yaml`
 
 
 ## AI & Data Vision
@@ -53,7 +53,7 @@ These rules are invariants. Violation is a hard stop in any review.
 
 1. `CustomerX`, `OperX`, `TrustX` are **value stream labels only** — they never
    appear in BigQuery dataset names or table names.
-2. `assets.yaml` contains only real, confirmed BigQuery tables. No placeholders.
+2. `assets.yaml` contains only real, confirmed BigQuery tables. No placeholders. Source: `data/assets/assets.yaml`.
 3. **L0 raw is excluded from governed scope.** Lineage starts at L1.
    All L1 tables carry `upstream_urns: []`.
 4. All transformations L0→L3 are executed via **Temporal sagas** (PRISM Fetcher).
@@ -61,7 +61,7 @@ These rules are invariants. Violation is a hard stop in any review.
 5. All tag names must be verified against `technical_tags.yaml` and `policy_tags.yaml`
    before use. Unknown tags are a validation error.
 6. All glossary term references must use dot-notation paths verified against
-   `glossary.yaml` (e.g. `DataSources.MetaAdsAPI`, `Workflows.BudgetManagement`).
+   `canonical/business/business.yaml` (e.g. `DataSources.MetaAdsAPI`, `Workflows.BudgetManagement`).
 7. **DataHub storage tiers:** L1 Standardised (GCS), L2 Normalised/Hive-partitioned
    (GCS), L3 Certified (BigQuery).
 8. Temporal is **excluded from DataHub emission** — PRISM sagas write rows to
@@ -107,7 +107,7 @@ Reference PLAT-CAP IDs in initiative briefs when a capability is in scope.
 
 ### Governance
 
-- **PLAT-CAP-21 DataHubGovernance** — PLAT-CAP-21. Metadata catalogue, lineage, ownership, and policy enforcement. DataHub OSS 0.13.1 is the governance backbone — every dataset, glossary t…
+- **PLAT-CAP-21 DataHubGovernance** — PLAT-CAP-21. Metadata catalogue, lineage, ownership, and policy enforcement. DataHub OSS 0.13.1 is the governance backbone — every dataset, canonical …
 - **PLAT-CAP-22 DataQualityEngine** — PLAT-CAP-22. Automated schema, freshness, and anomaly checks on pipeline outputs. Runs after each L2→L3 promotion step. Checks: schema drift, null rat…
 - **PLAT-CAP-23 PolicyTagEnforcement** — PLAT-CAP-23. Runtime access control tied to DataHub policy tag classifications. Sensitivity and PII tags applied in DataHub propagate to BigQuery IAM …
 
@@ -371,6 +371,92 @@ Engineering Documentation Management [engdocs]. AI-governed documentation co-pil
 *Objectives: OperationalEfficiency, ProcessOptimisation, RiskMitigation*
 
 
+## Security Incident Event Management
+
+> Organisational-wide security policies, runbooks, standards, and SOPs governing incident response, data access, and AI agent boundaries. Every AI agent action traceable through Langfuse must be auditable against at least one entry in this section. Applies to all nine observer-controller loops.
+
+### Policies
+
+Organisational-wide security and incident response policies governing how Madgicx detects, escalates, responds to, and recovers from security incidents, data breaches, and agentic AI boundary violations. Every AI agent action that triggers a kill switch or permission boundary must be traceable to a policy in this node. Applies to all nine observer-controller loops.
+
+#### IncidentClassificationPolicy
+**ID:** `SEC-POL-001`  
+**Applies to loops:** CL-1,CL-2,CL-3,CL-5,CL-6,CL-9  
+
+Defines the four severity tiers (P0–P3) for security and data incidents at Madgicx. P0: platform-wide data breach or agentic AI unrecoverable action (e.g. irreversible ad spend). P1: partial data loss or agent boundary violation with recoverable impact. P2: degraded service or policy deviation detected and contained. P3: anomaly detected, no confirmed impact. All incidents must be classified within 15 minutes of detection.
+
+#### DataAccessControlPolicy
+**ID:** `SEC-POL-002`  
+**Applies to loops:** CL-3,CL-5,CL-6  
+
+Governs who may read, write, or delete data assets within the Madgicx platform. All BigQuery datasets, GCS buckets, and API credentials must be provisioned via IAM through Serhii/Indika — no ad hoc access grants. Service accounts for AI agents must be scoped to minimum required permissions and reviewed quarterly. Violations trigger CL-3 and CL-5.
+
+#### AgentBoundaryPolicy
+**ID:** `SEC-POL-003`  
+**Applies to loops:** CL-3,CL-9  
+
+Defines the permissible action envelope for all AgentForge AI agents. Agents must not execute write operations to Facebook Ads, Google Ads, or any external ad platform without explicit human approval via the two-step confirmation gate. In-flight MCP tool calls cannot be recalled once fired (gap KG-P7-07) — this policy mandates pre-flight validation via evalTools (promptGuardrail, toolPolicyCheck, schemaValidator) before any irreversible action is dispatched. Kill switch authority: Nuwan (AI Governance Council representative).
+
+### Runbooks
+
+Step-by-step operational runbooks for responding to security incidents, data quality failures, and agentic AI boundary violations. Runbooks are the executable layer beneath policies — they tell the on-call engineer exactly what to do, in what order, and who to notify. Each runbook maps to one or more observer-controller loops and must reference the applicable policy (SEC-POL-*).
+
+#### DataBreachResponseRunbook
+**ID:** `SEC-RB-001`  
+**Applies to loops:** CL-1,CL-5  
+
+On-call procedure for a confirmed or suspected data breach. Step 1: Classify severity (SEC-POL-001). Step 2: Isolate affected service account or dataset via GCP IAM revocation (Serhii/Indika). Step 3: Notify AI Governance Council (Nuwan) within 30 minutes. Step 4: Preserve audit logs in activity-logs-production before any remediation. Step 5: Open P0/P1 ClickUp incident task with timeline. Step 6: Post-incident review within 48 hours. Applies to CL-1, CL-5.
+
+#### AgentKillSwitchRunbook
+**ID:** `SEC-RB-002`  
+**Applies to loops:** CL-3,CL-9  
+
+Procedure for activating a kill switch on a rogue or boundary-violating AI agent. Graceful stop: invoke LangGraph Cancel() on the active run — halts new tool dispatches, allows in-flight Temporal activities to drain. Hard stop: revoke the agent service account via GCP IAM (Serhii/Indika) or disable the Kong MCP endpoint (Sri). Note gap KG-P7-07: in-flight Facebook Ads and Google Ads MCP tool calls cannot be recalled once fired — monitor platform dashboards for 15 minutes post-kill. Notify Lior/Yuval if ad spend is affected. Log incident in Langfuse trace. Applies to CL-3.
+
+### SOPs
+
+Standard Operating Procedures for routine security, governance, and compliance operations at Madgicx. SOPs are the day-to-day operational layer — repeated, scheduled tasks that maintain platform security posture between incidents. Each SOP has a defined owner, cadence, and checklist.
+
+#### QuarterlyIAMAuditSOP
+**ID:** `SEC-SOP-001`  
+**Applies to loops:** CL-5  
+
+Quarterly review of all GCP service account permissions, BigQuery dataset ACLs, and GCS bucket policies. Checklist: (1) Export IAM bindings for madgicx-development and madgicx-data projects. (2) Cross-reference against approved grants in mdx-gov-hub data/users/ and data/groups/. (3) Flag any service account with roles beyond the IAMProvisioningStandard (SEC-STD-001) baseline. (4) Revoke unapproved grants via Serhii/Indika within 5 business days. (5) Log findings in the ClickUp security audit task. Applies to CL-5.
+
+#### CanonicalSyncVerificationSOP
+**ID:** `SEC-SOP-002`  
+**Applies to loops:** CL-6  
+
+Weekly check that governance-canonical.md in _context/ matches the deterministic output of generate_canonical.py. Procedure: (1) Run python scripts/build/generate_canonical.py --config-dir . --validate-only. (2) Confirm zero validation errors. (3) Diff output against _context/governance-canonical.md — any divergence means the CI pipeline (sync-canonical.yml) failed silently. (4) If divergence found, trigger manual re-run of sync-canonical workflow and open a P2 incident task. Applies to CL-6.
+
+#### AgentTraceAuditSOP
+**ID:** `SEC-SOP-003`  
+**Applies to loops:** CL-3,CL-6,CL-9  
+
+Monthly review of Langfuse agent traces to verify traceability chain integrity. Procedure: (1) Pull last 30 days of AgentForge traces from Langfuse. (2) For each trace, verify: run_id → θCortex workflow_id → canonical term → BusinessGoals entry. (3) Flag any trace missing a canonical term reference — this is a CL-9 signal. (4) Spot-check 10% of MCP tool calls against MCPToolCallValidationStandard (SEC-STD-003) pass/fail logs. (5) Report findings to AI Governance Council (Nuwan).
+
+### Standards
+
+Technical and architectural security standards that all Madgicx platform components must comply with. Standards define the measurable baseline — they are testable, version-controlled, and reviewed on a defined cadence. Non-compliance with a standard is a P2 incident by default unless the affected loop owner has filed a documented exception.
+
+#### IAMProvisioningStandard
+**ID:** `SEC-STD-001`  
+**Applies to loops:** CL-3,CL-5  
+
+All GCP IAM grants — service accounts, dataset permissions, bucket ACLs — must be provisioned via the mdx-gov-hub IAM request process through Serhii/Indika. No direct console grants. Service accounts for AI agents must follow least-privilege: roles limited to serviceUsageConsumer, bigquery.dataViewer, bigquery.jobUser unless a documented exception exists. Quarterly audit required. Deviations trigger CL-5.
+
+#### CanonicalGenerationStandard
+**ID:** `SEC-STD-002`  
+**Applies to loops:** CL-1,CL-2,CL-3,CL-4,CL-5,CL-6,CL-7,CL-8,CL-9  
+
+The governance-canonical.md must be generated deterministically from mdx-gov-hub YAML via generate_canonical.py. It must never be hand-authored, LLM-generated, or modified outside the CI pipeline (sync-canonical.yml). Any AI consumer (Roocode, grill-me-engdocs, AgentForge agent) that reads from a stale or manually edited canonical is in violation of this standard. Validated on every push to main via the sync-canonical.yml CI workflow. Applies to CL-6 directly; all other loops transitively.
+
+#### MCPToolCallValidationStandard
+**ID:** `SEC-STD-003`  
+**Applies to loops:** CL-3,CL-9  
+
+All MCP tool calls from AgentForge agents to external ad platforms (Facebook Ads, Google Ads) must pass the evalTools hard-fail gate before dispatch: promptGuardrail, toolPolicyCheck, and schemaValidator must all return pass. Calls that fail validation must be logged in Langfuse with reason code and never silently dropped. Implements the pre-flight gate described in AgentBoundaryPolicy (SEC-POL-003). Applies to CL-3, CL-9.
+
 ## Domain Taxonomy
 
 All assets must declare a domain from this list.
@@ -519,25 +605,6 @@ Business terms related to email and SMS marketing performance via Klaviyo. Klavi
 - `EmailMarketing.EmailAttributedRevenue` — Revenue attributed to Klaviyo email campaigns or flows within the platform's attribution window. Klaviyo uses last-touch…
 - `EmailMarketing.ListGrowthRate` — The rate at which the Klaviyo subscriber list is growing net of unsubscribes and bounces. Calculated as ((New Subscriber…
 
-### DataGovernance
-Terms related to data quality, pipeline reliability, ingestion health, and attribution governance for the Madgicx data platform. These concepts are the basis for the alerts and signals produced in the…
-
-#### Attribution
-Concepts and models governing how credit for a conversion is assigned to one or more ad touchpoints across the customer journey.
-
-- `DataGovernance.Attribution.LastClickAttribution` — An attribution model that assigns 100% of conversion credit to the last ad clicked before conversion. Simple but underva…
-- `DataGovernance.Attribution.DataDrivenAttribution` — A machine-learning-based attribution model available in Google Ads and GA4 that distributes conversion credit across all…
-- `DataGovernance.Attribution.MetaAttributedConversions` — Conversions reported within Meta Ads Manager based on the Meta pixel, Conversions API (CAPI), or app SDK. Subject to iOS…
-
-#### IngestionHealth
-Metrics and flags monitoring the reliability and completeness of data ingestion pipelines from all advertising and eCommerce sources. Breaches of these thresholds produce alerts in the Signals & Alert…
-
-- `DataGovernance.IngestionHealth.DataFreshness` — The recency of ingested data relative to the current timestamp. Defined as the time elapsed since the last successful da…
-- `DataGovernance.IngestionHealth.APIRateLimit` — The maximum number of API calls permitted by a platform within a given time window. Key limits: Facebook Marketing API (…
-- `DataGovernance.IngestionHealth.DataGap` — A period of missing or incomplete data in an ingested dataset, caused by API outages, rate limiting, credential expiry, …
-- `DataGovernance.IngestionHealth.ConversionDelay` — The latency between a conversion event occurring and it appearing in platform reporting APIs. Facebook can delay up to 7…
-
-
 ### SignalsAndAlerts
 Terms defining the alert taxonomy, severity model, and signal types produced by the Madgicx platform. Alerts are consumed by the AI Campaign Management agent to trigger or suppress automated actions, …
 
@@ -649,20 +716,13 @@ The primary product workflows fulfilling Madgicx 2.0 software services, bound by
   > Depends on: `reporting, tracking`
 - `Workflows.EngineeringDocumentation` — Engineering Documentation Management [engdocs]. AI-governed documentation co-pilot that eliminates manual document autho…
 
-### DataSources
-Catalogue of all external and internal data sources that feed the Madgicx platform. Each term documents the source's domain ownership, group, policy classification, warehouse statistics, and strategic…
+### AIDataVision
+The AI and Data vision, value stream framework, and capability architecture for the Madgicx platform. This node is the strategic anchor — every initiative, data asset, and platform capability must con…
 
-- `DataSources.MetaAdsAPI` — Data directly from Meta's advertising platforms (Facebook and Instagram) via the Marketing API. Covers campaign performa…
-- `DataSources.MadgicxAuxiliaryAdData` — Proprietary data gathered from external sources outside official APIs. Covers competitor ads, offers, product catalogues…
-- `DataSources.GoogleAdsAPI` — Data imported from Google's advertising platforms (Search, Display, YouTube) via the Google Ads API. Includes clicks, co…
-- `DataSources.GoogleAnalyticsGA4` — Website user behaviour and conversion data via GA4 BigQuery export. Provides traffic sources, user engagement (session d…
-- `DataSources.ShopifySource` — Direct connection to client Shopify stores pulling product, customer, and order data — product IDs, titles, prices, inve…
-- `DataSources.KlaviyoSource` — Connection to client Klaviyo accounts providing email and SMS marketing performance, customer segments, and lifecycle st…
-- `DataSources.TikTokAdsAPI` — API-led connection to TikTok Ads Manager pulling campaign, ad group, and ad performance data — impressions, clicks, spen…
-- `DataSources.MadgicxActivityLogs` — Internal PostgreSQL production database — the product's own operational database and the largest data input at approxima…
-- `DataSources.IntercomSource` — Customer support data from Intercom covering contacts, conversations, and companies. Core tables: conversations (254,401…
-- `DataSources.LangfuseSource` — AI agent tracing and evaluation platform. Planned to provide full AgentTrace records per θCortex agent run — prompt inpu…
-- `DataSources.ClickUpSource` — Support tickets and feature requests from ClickUp. Planned to provide execution ticket data linking operational decision…
+- `AIDataVision.PlatformVision` — Empower social media marketers with trusted AI and data intelligence that improves advertising performance, accelerates …
+- `AIDataVision.SAFeFramework` — Scaled Agile Framework (SAFe) value stream thinking is the strategic delivery model for Madgicx. SAFe value streams defi…
+- `AIDataVision.CapabilityAreas` — Three capability areas — the 3 As — that value streams inherit as a combination of Activation, Awareness, and Adaptive c…
+- `AIDataVision.StakeholderAlignment` — The stakeholder alignment matrix maps each value stream to its primary stakeholder group and the business goals that gov…
 
 ### PlatformCapabilities
 The canonical catalogue of all Madgicx platform capabilities. Each term maps to a PLAT-CAP-ID and defines what the capability does, which service layer it belongs to, and how it connects to the value …
@@ -716,6 +776,67 @@ Platform capabilities that deliver data, insights, and actions to end users and 
 - `PlatformCapabilities.Serving.Omnichannel` — PLAT-CAP-28. Unified delivery of alerts, insights, and recommendations across all customer touchpoints — in-app, email, …
 
 
+### IncidentResponsePolicies
+Organisational-wide security and incident response policies governing how Madgicx detects, escalates, responds to, and recovers from security incidents, data breaches, and agentic AI boundary violatio…
+
+- `IncidentResponsePolicies.IncidentClassificationPolicy` — Defines the four severity tiers (P0–P3) for security and data incidents at Madgicx. P0: platform-wide data breach or age…
+- `IncidentResponsePolicies.DataAccessControlPolicy` — Governs who may read, write, or delete data assets within the Madgicx platform. All BigQuery datasets, GCS buckets, and …
+- `IncidentResponsePolicies.AgentBoundaryPolicy` — Defines the permissible action envelope for all AgentForge AI agents. Agents must not execute write operations to Facebo…
+
+### IncidentResponseRunbooks
+Step-by-step operational runbooks for responding to security incidents, data quality failures, and agentic AI boundary violations. Runbooks are the executable layer beneath policies — they tell the on…
+
+- `IncidentResponseRunbooks.DataBreachResponseRunbook` — On-call procedure for a confirmed or suspected data breach. Step 1: Classify severity (SEC-POL-001). Step 2: Isolate aff…
+- `IncidentResponseRunbooks.AgentKillSwitchRunbook` — Procedure for activating a kill switch on a rogue or boundary-violating AI agent. Graceful stop: invoke LangGraph Cancel…
+
+### SecuritySOPs
+Standard Operating Procedures for routine security, governance, and compliance operations at Madgicx. SOPs are the day-to-day operational layer — repeated, scheduled tasks that maintain platform secur…
+
+- `SecuritySOPs.QuarterlyIAMAuditSOP` — Quarterly review of all GCP service account permissions, BigQuery dataset ACLs, and GCS bucket policies. Checklist: (1) …
+- `SecuritySOPs.CanonicalSyncVerificationSOP` — Weekly check that governance-canonical.md in _context/ matches the deterministic output of generate_canonical.py. Proced…
+- `SecuritySOPs.AgentTraceAuditSOP` — Monthly review of Langfuse agent traces to verify traceability chain integrity. Procedure: (1) Pull last 30 days of Agen…
+
+### SecurityStandards
+Technical and architectural security standards that all Madgicx platform components must comply with. Standards define the measurable baseline — they are testable, version-controlled, and reviewed on …
+
+- `SecurityStandards.IAMProvisioningStandard` — All GCP IAM grants — service accounts, dataset permissions, bucket ACLs — must be provisioned via the mdx-gov-hub IAM re…
+- `SecurityStandards.CanonicalGenerationStandard` — The governance-canonical.md must be generated deterministically from mdx-gov-hub YAML via generate_canonical.py. It must…
+- `SecurityStandards.MCPToolCallValidationStandard` — All MCP tool calls from AgentForge agents to external ad platforms (Facebook Ads, Google Ads) must pass the evalTools ha…
+
+### DataGovernance
+Terms related to data quality, pipeline reliability, ingestion health, and attribution governance for the Madgicx data platform. These concepts are the basis for the alerts and signals produced in the…
+
+#### Attribution
+Concepts and models governing how credit for a conversion is assigned to one or more ad touchpoints across the customer journey.
+
+- `DataGovernance.Attribution.LastClickAttribution` — An attribution model that assigns 100% of conversion credit to the last ad clicked before conversion. Simple but underva…
+- `DataGovernance.Attribution.DataDrivenAttribution` — A machine-learning-based attribution model available in Google Ads and GA4 that distributes conversion credit across all…
+- `DataGovernance.Attribution.MetaAttributedConversions` — Conversions reported within Meta Ads Manager based on the Meta pixel, Conversions API (CAPI), or app SDK. Subject to iOS…
+
+#### IngestionHealth
+Metrics and flags monitoring the reliability and completeness of data ingestion pipelines from all advertising and eCommerce sources. Breaches of these thresholds produce alerts in the Signals & Alert…
+
+- `DataGovernance.IngestionHealth.DataFreshness` — The recency of ingested data relative to the current timestamp. Defined as the time elapsed since the last successful da…
+- `DataGovernance.IngestionHealth.APIRateLimit` — The maximum number of API calls permitted by a platform within a given time window. Key limits: Facebook Marketing API (…
+- `DataGovernance.IngestionHealth.DataGap` — A period of missing or incomplete data in an ingested dataset, caused by API outages, rate limiting, credential expiry, …
+- `DataGovernance.IngestionHealth.ConversionDelay` — The latency between a conversion event occurring and it appearing in platform reporting APIs. Facebook can delay up to 7…
+
+
+### DataSources
+Catalogue of all external and internal data sources that feed the Madgicx platform. Each term documents the source's domain ownership, group, policy classification, warehouse statistics, and strategic…
+
+- `DataSources.MetaAdsAPI` — Data directly from Meta's advertising platforms (Facebook and Instagram) via the Marketing API. Covers campaign performa…
+- `DataSources.MadgicxAuxiliaryAdData` — Proprietary data gathered from external sources outside official APIs. Covers competitor ads, offers, product catalogues…
+- `DataSources.GoogleAdsAPI` — Data imported from Google's advertising platforms (Search, Display, YouTube) via the Google Ads API. Includes clicks, co…
+- `DataSources.GoogleAnalyticsGA4` — Website user behaviour and conversion data via GA4 BigQuery export. Provides traffic sources, user engagement (session d…
+- `DataSources.ShopifySource` — Direct connection to client Shopify stores pulling product, customer, and order data — product IDs, titles, prices, inve…
+- `DataSources.KlaviyoSource` — Connection to client Klaviyo accounts providing email and SMS marketing performance, customer segments, and lifecycle st…
+- `DataSources.TikTokAdsAPI` — API-led connection to TikTok Ads Manager pulling campaign, ad group, and ad performance data — impressions, clicks, spen…
+- `DataSources.MadgicxActivityLogs` — Internal PostgreSQL production database — the product's own operational database and the largest data input at approxima…
+- `DataSources.IntercomSource` — Customer support data from Intercom covering contacts, conversations, and companies. Core tables: conversations (254,401…
+- `DataSources.LangfuseSource` — AI agent tracing and evaluation platform. Planned to provide full AgentTrace records per θCortex agent run — prompt inpu…
+- `DataSources.ClickUpSource` — Support tickets and feature requests from ClickUp. Planned to provide execution ticket data linking operational decision…
+
 ### DataWarehouseArchitecture
 The value-stream-scoped BigQuery data warehouse architecture for the Madgicx platform. Three warehouse datasets exist within the BigQuery project — one per value stream (CustomerX, OperX, TrustX) — ea…
 
@@ -762,14 +883,6 @@ The CustomerX Feature Store — curated ML-ready feature sets serving low-latenc
 - `DataWarehouseArchitecture.CustomerXFeatureStore.AccountPerformanceFeatures` — Feature set: account-level performance signals for churn prediction and bid optimisation models. Covers rolling 7d/30d/9…
 - `DataWarehouseArchitecture.CustomerXFeatureStore.CreativeFatigueFeatures` — Feature set: creative-level fatigue signals for the fatigue scoring model. Covers frequency progression, CTR decay rate …
 
-
-### AIDataVision
-The AI and Data vision, value stream framework, and capability architecture for the Madgicx platform. This node is the strategic anchor — every initiative, data asset, and platform capability must con…
-
-- `AIDataVision.PlatformVision` — Empower social media marketers with trusted AI and data intelligence that improves advertising performance, accelerates …
-- `AIDataVision.SAFeFramework` — Scaled Agile Framework (SAFe) value stream thinking is the strategic delivery model for Madgicx. SAFe value streams defi…
-- `AIDataVision.CapabilityAreas` — Three capability areas — the 3 As — that value streams inherit as a combination of Activation, Awareness, and Adaptive c…
-- `AIDataVision.StakeholderAlignment` — The stakeholder alignment matrix maps each value stream to its primary stakeholder group and the business goals that gov…
 
 
 ## Asset Registry
