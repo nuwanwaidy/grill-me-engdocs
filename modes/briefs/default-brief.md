@@ -15,7 +15,7 @@ here are typically a strategy document or roadmap initiative description.
 **During Opening:**
 - Identify the Initiative name from the Roadmap
 - Identify which Architecture components are involved
-  (PRISM · θCortex · mdx-gov-hub · AgentForge — which systems does this touch?)
+  (PRISM · θCortex · DataHub · AgentForge — which systems does this touch?)
 - Identify the Value Stream (CustomerX / OperX / TrustX)
 - Confirm before drilling
 
@@ -79,7 +79,7 @@ Leadership will reject a Brief that can't answer "why" and "why now" clearly.
 ## Opening
 
 > *"Give me the initiative in one sentence — what is it, which Madgicx
-> system(s) does it involve (PRISM · θCortex · mdx-gov-hub · AgentForge),
+> system(s) does it involve (PRISM · θCortex · DataHub · AgentForge),
 > and which value stream does it serve (CustomerX · OperX · TrustX)?"*
 
 After the answer:
@@ -106,7 +106,7 @@ After the answer:
 
 | If they say... | Ask... |
 |---|---|
-| "Users can't find data" | "Which domain — and is this a mdx-gov-hub discoverability gap or a PRISM ingestion gap?" |
+| "Users can't find data" | "Which domain — and is this a DataHub discoverability gap or a PRISM ingestion gap?" |
 | "The process is manual" | "Which workflow ID — and which OperX or CustomerX users are affected?" |
 | "There's no visibility" | "Visibility into what — pipeline health, data quality, lineage, or business metrics?" |
 | "It's a competitive gap" | "Which CustomerX workflow is degraded because of it?" |
@@ -146,7 +146,7 @@ Context: >50 high · 20–50 medium-high · 10–20 medium · <10 low
 | "Leadership asked for it" | "Is there a specific OKR or roadmap directive behind it?" |
 | Claims multiple objectives | "Which one is the primary driver?" |
 | Can't connect to an objective | "If this doesn't serve a current objective, is this a new strategic bet?" |
-| Proposes a new system | "Is this using existing architecture (PRISM/θCortex/mdx-gov-hub) or proposing something new? If new — that's an architecture decision, not a brief." |
+| Proposes a new system | "Is this using existing architecture (PRISM/θCortex/DataHub) or proposing something new? If new — that's an architecture decision, not a brief." |
 
 **Satisfied when:** named objective + signal question answered + RICE score computed.
 
@@ -210,7 +210,7 @@ Produce the document in this format — then append the Handoff block.
 |---|---|
 | Initiative | [Initiative name from Roadmap] |
 | Value Stream | [CustomerX / OperX / TrustX] |
-| Architecture Components | [PRISM · θCortex · mdx-gov-hub · AgentForge — which are involved] |
+| Architecture Components | [PRISM · θCortex · DataHub · AgentForge — which are involved] |
 | Domain(s) | [`domain_id` from governance-canonical] |
 | Workflow(s) | [`workflow_id` from governance-canonical — if applicable] |
 | Business Objective | `BusinessGoals.[objective]` |
@@ -276,7 +276,7 @@ Reference from `canonical/siem/`:
 | Initiative | [initiative name from Roadmap] |
 | Value Stream | [CustomerX / OperX / TrustX] |
 | Business Objective(s) | [top 1–2 from canonical] |
-| Architecture Components | [PRISM · θCortex · mdx-gov-hub · AgentForge — which involved] |
+| Architecture Components | [PRISM · θCortex · DataHub · AgentForge — which involved] |
 | Domain(s) | [domain IDs] |
 | Workflow(s) | [workflow IDs — if applicable] |
 | RICE Score | [score] |

@@ -23,7 +23,7 @@ what changed in the epic and how this feature needs to update."
 
 **During Opening:**
 - After the one-liner, immediately identify value stream, domain(s), and
-  Madgicx system (PRISM / θCortex / mdx-gov-hub / AgentForge) from the answer
+  Madgicx system (PRISM / θCortex / DataHub / AgentForge) from the answer
 - Confirm these with the user before drilling into anchors
 
 **During Anchor 1 (Problem):**
@@ -68,7 +68,7 @@ what changed in the epic and how this feature needs to update."
 - Pattern: [Actor] ->> [Actor] : [Message] / [Actor] -->> [Actor] : [Response]
 - Never accept free prose — drill until actor→actor→message triples are clear
 - Confirm Temporal as orchestration trigger (PRISM service)
-- Confirm mdx-gov-hub GMS Graph API as write target
+- Confirm DataHub GMS Graph API as write target
 - Ask: stale asset vs. delete on error? Validation before SDK call?
 
 **During F-Anchor 3 (Functional Requirements):**
@@ -117,7 +117,7 @@ Never move to output until both phases are strong.
 ### Opening
 
 > *"Give me the feature in one sentence — what does it do, which Madgicx
-> system does it live in (PRISM · θCortex · mdx-gov-hub · AgentForge), and
+> system does it live in (PRISM · θCortex · DataHub · AgentForge), and
 > who is it for?"*
 
 After the answer:
@@ -131,9 +131,9 @@ PRISM, θCortex etc.) answer in 2–3 sentences grounded in Madgicx systems:
 - TrustX: the governed foundation that PRISM and θCortex run on. PRISM
   ingests and transforms data (L0→L3); θCortex delivers data products and
   AI capabilities on top. TrustX governs that every PRISM asset has an owner
-  and domain in mdx-gov-hub, every θCortex decision is traceable via Langfuse,
+  and domain in DataHub, every θCortex decision is traceable via Langfuse,
   and data quality SLAs are enforced end to end.
-- Domain: a governed boundary in mdx-gov-hub grouping related data assets under
+- Domain: a governed boundary in DataHub grouping related data assets under
   an owner. e.g. `social_marketing__ad_performance` owns all Facebook/Google/
   TikTok ad performance data.
 - Value stream: a sequence of steps delivering value to a specific stakeholder
@@ -153,8 +153,8 @@ PRISM, θCortex etc.) answer in 2–3 sentences grounded in Madgicx systems:
 |---|---|
 | "There's no visibility into the data" | "Which domain(s) — and which PRISM tiers (L1/L2/L3) are currently dark?" |
 | "Data quality is unknown" | "Which of the 7 quality dimensions are unmeasured — and do SLOs exist?" |
-| "Users can't find data" | "In mdx-gov-hub — is the catalogue empty, or assets registered but ungoverned?" |
-| "Pipeline failures go undetected" | "Are PRISM alerts (`signals_and_alerts__prism_pipeline_alerts`) not reaching mdx-gov-hub?" |
+| "Users can't find data" | "In DataHub — is the catalogue empty, or assets registered but ungoverned?" |
+| "Pipeline failures go undetected" | "Are PRISM alerts (`signals_and_alerts__prism_pipeline_alerts`) not reaching DataHub?" |
 | No evidence cited | "What's the strongest signal you have that this problem is real?" |
 
 **Satisfied when:** concrete problem + named domain(s) + named storage tiers
@@ -166,7 +166,7 @@ PRISM, θCortex etc.) answer in 2–3 sentences grounded in Madgicx systems:
 
 **Broad question:**
 > *"[Reference the specific system/pipeline from opening] — so what specifically
-> changes in [mdx-gov-hub/θCortex/PRISM] once this feature is delivered? What can
+> changes in [DataHub/θCortex/PRISM] once this feature is delivered? What can
 > [named user type] do after that they couldn't do before?"*
 
 **RICE score — compute here:**
@@ -181,9 +181,9 @@ PRISM, θCortex etc.) answer in 2–3 sentences grounded in Madgicx systems:
 
 | If they say... | Ask... |
 |---|---|
-| Names a vague outcome | "How would you measure that — what does someone see or click in mdx-gov-hub?" |
+| Names a vague outcome | "How would you measure that — what does someone see or click in DataHub?" |
 | "Lineage is visible" | "Dataset-level or column-level? Which columns — are they in the glossary?" |
-| "Data is certified" | "Certified via mdx-gov-hub tags — which tag schema: technical_tags or policy tags?" |
+| "Data is certified" | "Certified via DataHub tags — which tag schema: technical_tags or policy tags?" |
 | Claims multiple outcomes | "Which one is the primary driver for the POC?" |
 
 **Satisfied when:** named measurable outcome + Business Objective + trust
@@ -195,14 +195,14 @@ contract clause + RICE score computed.
 
 **Broad question:**
 > *"[Reference the specific pipeline and domain from opening] — who specifically
-> benefits when this is live in [mdx-gov-hub/θCortex], and what does their workflow
+> benefits when this is live in [DataHub/θCortex], and what does their workflow
 > look like before and after?"*
 
 **Drill-in triggers:**
 
 | If they say... | Ask... |
 |---|---|
-| "Analysts benefit" | "Which workflow — and what can they do in mdx-gov-hub they can't today?" |
+| "Analysts benefit" | "Which workflow — and what can they do in DataHub they can't today?" |
 | "Engineers benefit" | "Impact analysis before schema changes — which PRISM components does that touch?" |
 | "AI agents benefit" | "Which AgentForge agents — via which MCP server or serving layer?" |
 | "All users benefit" | "Who benefits most in the POC scope?" |
@@ -226,11 +226,11 @@ deliberately not solving yet?"*
 
 ### Supporting questions — Success Criteria
 
-- *"How do we know this is done — what specifically does mdx-gov-hub show or what
+- *"How do we know this is done — what specifically does DataHub show or what
   can a named user do that proves it works?"*
 - *"Are there specific test accounts or datasets the POC must validate against?"*
 - *"Is there an analyst trace scenario — a specific KPI a user should be able
-  to trace end-to-end in mdx-gov-hub?"*
+  to trace end-to-end in DataHub?"*
 
 ---
 
@@ -263,7 +263,7 @@ Ask each dimension separately. Define the scale before asking:
 If rating_table uploaded: parse Wiegers tab and compute value score automatically.
 
 Confirm which Tech Stack components are used:
-- mdx-gov-hub SDK · GMS Graph API · Temporal (PRISM service) · Redpanda schema registry
+- DataHub SDK · GMS Graph API · Temporal (PRISM service) · Redpanda schema registry
 
 ---
 
@@ -271,7 +271,7 @@ Confirm which Tech Stack components are used:
 
 **Question:**
 > *"Walk me through the key sequences — name each actor (Temporal, MetadataEnricher,
-> GMS API, mdx-gov-hub UI etc.), what triggers each step, and what each system
+> GMS API, DataHub UI etc.), what triggers each step, and what each system
 > returns. Include at least one error path."*
 
 Sequences must be extracted as Mermaid-ready actor→message triples:
@@ -355,7 +355,7 @@ L3 Certified/BigQuery), and evidence of impact.*
 
 ## Goal (Outcome)
 
-*Measurable outcome. What mdx-gov-hub shows or what a named user can do.*
+*Measurable outcome. What DataHub shows or what a named user can do.*
 *Trust contract clause satisfied:* [clause]
 
 ## User Impact
@@ -384,7 +384,7 @@ L3 Certified/BigQuery), and evidence of impact.*
 
 | Criterion | Measure |
 |---|---|
-| [criterion] | [specific mdx-gov-hub view or user action] |
+| [criterion] | [specific DataHub view or user action] |
 
 ## Dependencies / Risks
 
@@ -441,39 +441,9 @@ Reference from `canonical/siem/`:
 
 ---
 
-## Appendix — Sequence Diagram
+## Sequence Diagram
 
-> Inline Mermaid source. Renders natively in GitHub, ClickUp, Notion, and any Mermaid-compatible viewer.
-> Copy the block below into any viewer if your platform does not auto-render.
-
-```mermaid
-sequenceDiagram
-  autonumber
-  %% Generated by engdocs from F-Anchor 2 — Sequence & Process Flow
-  %% Replace placeholder actors and messages with session output
-
-  actor User
-  participant PRISM
-  participant θCortex
-  participant mdx-gov-hub
-  participant AgentForge
-
-  User->>PRISM: Trigger data ingestion / pipeline action
-  PRISM->>θCortex: Emit certified data event (L2→L3)
-  θCortex->>mdx-gov-hub: Register asset with canonical term URN
-  mdx-gov-hub-->>θCortex: Asset registered and tagged
-  θCortex-->>AgentForge: Signal available for agent consumption
-  AgentForge-->>User: Action or insight delivered
-
-  alt Canonical term not found
-    mdx-gov-hub-->>θCortex: Unknown term — reject registration
-    θCortex-->>PRISM: Pipeline halted — governance gate
-    PRISM-->>User: Notify: asset failed certification
-  end
-```
-
-> **Note:** The diagram above is a template scaffold. The skill replaces actors and messages
-> with the specific sequence extracted during the F-Anchor 2 grilling.
+> See `sequence.mmd` in the download bundle. Render in GitHub, ClickUp, Notion, or any Mermaid-compatible viewer.
 
 ---
 
@@ -486,7 +456,7 @@ sequenceDiagram
 | Initiative | [initiative name — from parent Brief/PRD if uploaded] |
 | Value Stream | [CustomerX / OperX / TrustX] |
 | Business Objective(s) | [top 1–2 from canonical] |
-| Architecture Components | [PRISM · θCortex · mdx-gov-hub — which involved] |
+| Architecture Components | [PRISM · θCortex · DataHub — which involved] |
 | Domain(s) | [domain IDs] |
 | Workflow(s) | [workflow IDs] |
 | REQ Count | [N confirmed REQs] |
@@ -530,6 +500,6 @@ If any check fails, resolve the gap before finalising.
 - Storage tiers always stated as: L1 Standardized · L2 Normalised (GCS Hive) · L3 Certified (BigQuery)
 - dbt never referenced — transformations are Temporal sagas
 - Column lineage REQs reference AdPerformanceMetrics glossary names
-- URN formats match mdx-gov-hub URN pattern
+- URN formats match DataHub URN pattern from datahub-facebook repo
 - TBD used honestly — never invented
 - REQ table: two columns only, "The system shall..." phrasing, no Status column

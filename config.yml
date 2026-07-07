@@ -2,27 +2,28 @@
 # config.yml — Grill Me Mode Registry
 # Repository: github.com/nuwanwaidya/grill-me-engdocs
 # Future:     github.com/madgicx/skills
-# Version:    0.4
+# Version:    0.5
 #
 # Single source of truth for all available grill-me-engdocs modes.
 # SKILL.md reads this file to build the menu and route to the correct
 # sub-skill. SKILL.md never needs editing when adding a new mode.
 #
 # To add a new mode:
-#   1. Create the .md file in playbooks/<folder>/
+#   1. Create the .md file in modes/<folder>/
 #   2. Add an entry here — done
 #
 # Naming convention:
-#   All playbook files use default- prefix: default-brief.md, default-prd.md etc.
+#   All mode files use default- prefix: default-brief.md, default-prd.md etc.
 #   Domain-specific variants follow the same pattern: data-prd.md, ai-brief.md etc.
 #
-# Playbook folder conventions:
+# Mode folder conventions:
 #   briefs/          Concept notes for leadership sign-off
 #   prd/             Product Requirements Documents (default + domain-specific)
 #   epics/           Grouped deliverable components for sprints
 #   features/        Concrete capabilities with functional spec
 #   stories/         User stories and tech stories
 #   investigations/  Spike and investigation documents
+#   specs/           System Specifications (IEEE SRS-style) for Data/ML systems
 #
 # Fields:
 #   id                   Unique mode identifier
@@ -30,23 +31,90 @@
 #   label                Display name in the menu
 #   description          One-line description of what the user gets
 #   triggers             Words/phrases the user might type to select this mode
-#   path                 Path to sub-skill file, relative to repo root
+#   path                 Path to mode file, relative to repo root
 #   status               active | coming_soon
-#   folder               Playbook subfolder this mode belongs to
-#   lifecycle_stage      InitiativeLifecycle stage this playbook gates
-#   handoff_accepts      Prior playbook(s) this mode can receive as upload context
-#                        [] = first in chain, no prior playbook expected
-#   handoff_produces     Next playbook(s) this mode hands off to
+#   folder               Mode subfolder this mode belongs to
+#   lifecycle_stage      InitiativeLifecycle stage this mode gates
+#   handoff_accepts      Prior artefact(s) this mode can receive as upload context
+#                        [] = first in chain, no prior artefact expected
+#   handoff_produces     Next artefact(s) this mode hands off to
 #   review_modes         guided | express | auto | review
 #   default_review_mode  Default if user doesn't specify
-#   rating_methods       rice | wiegers | moscow
-#   supports_upload      prior_playbook | rating_table
+#   rating_methods       rice | wiegers | moscow | ssqs
+#   supports_upload      prior_artefact | rating_table
 # =============================================================================
 
-version: "0.4"
+version: "0.5"
 context: "_context/governance-canonical.md"
-playbooks_root: "playbooks"  # SSOT — change here to rename the folder
+modes_root: "modes"  # SSOT — change here to rename the folder
 review_mode_prompt: true
+
+# ---------------------------------------------------------------------------
+# Lifecycle enforcement (F1)
+# ---------------------------------------------------------------------------
+# Modes with requires_brief: true cannot begin anchoring without a Brief.
+# The skill must ask for a ClickUp URL or .md upload before proceeding.
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Output validation rules (F5 + F7)
+# All active modes must satisfy these before output is finalised.
+# ---------------------------------------------------------------------------
+output_validation_rules:
+
+  - id: OVR-01
+    description: "At least one BusinessGoals.* term named"
+    applies_to: all
+
+  - id: OVR-02
+    description: "At least one Workflow ID named"
+    applies_to: all
+
+  - id: OVR-03
+    description: "At least one SIEM policy term cited (SEC-POL-* · SEC-STD-* · SEC-RB-* · SEC-SOP-*)"
+    applies_to: all
+
+  - id: OVR-04
+    description: "RICE score computed with all four components (Reach · Impact · Confidence · Effort)"
+    applies_to: [default-brief, default-prd, default-epic, default-feature]
+
+  - id: OVR-05
+    description: "Wiegers value score computed on 1-5 scale with all four dimensions (Benefit · Penalty · Cost · Risk)"
+    applies_to: [default-brief, default-prd, default-epic, default-feature, default-investigation]
+
+  - id: OVR-06
+    description: "Handoff block present with all fields populated"
+    applies_to: all
+
+  - id: OVR-07
+    description: "Sequence diagram present"
+    applies_to: [default-epic, default-feature]
+
+  - id: OVR-08
+    description: "Upstream Brief loaded (via ClickUp URL or upload) before anchoring"
+    applies_to: [default-epic, default-feature, default-spec]
+
+  - id: OVR-09
+    description: "SSQS composite ≥ 3.5 and all four dimensions (Completeness · Verifiability · Traceability · Consistency) each ≥ 3"
+    applies_to: [default-spec]
+
+  - id: OVR-10
+    description: >
+      Output length must not exceed the page budget for the artefact type.
+      Page budget (A4, ~500 words/page, diagrams count as 1 page each):
+        default-brief         ≤ 2 pages
+        default-epic          ≤ 3 pages  (including sequence diagram)
+        default-feature       ≤ 3 pages  (including sequence diagram)
+        default-prd           ≤ 5 pages
+        default-spec          ≤ 15 pages
+        default-user-story    ≤ 1 page
+        default-tech-story    ≤ 1 page
+        default-investigation ≤ 3 pages
+        default-release-note  ≤ 1 page
+        default-white-paper   ≤ 10 pages
+      If the draft exceeds the budget: tighten prose, move detail to appendix,
+      or split into multiple artefacts. Do NOT exceed the limit silently.
+    applies_to: all
 
 modes:
 
@@ -64,7 +132,7 @@ modes:
       - "concept note"
       - "product brief"
       - "default brief"
-    path: "playbooks/briefs/default-brief.md"
+    path: "modes/briefs/default-brief.md"
     status: active
     folder: briefs
     lifecycle_stage: IDEATION
@@ -88,7 +156,7 @@ modes:
       - "prd"
       - "product requirements"
       - "default prd"
-    path: "playbooks/prd/default-prd.md"
+    path: "modes/prd/default-prd.md"
     status: coming_soon
     folder: prd
     lifecycle_stage: PLANNING
@@ -97,7 +165,7 @@ modes:
     review_modes: [guided, express, auto, review]
     default_review_mode: guided
     rating_methods: [rice, wiegers, moscow]
-    supports_upload: [prior_playbook, rating_table]
+    supports_upload: [prior_artefact, rating_table]
 
   # ---------------------------------------------------------------------------
   # EPICS — Grouped deliverable components for sprints
@@ -111,8 +179,9 @@ modes:
       - "3"
       - "epic"
       - "default epic"
-    path: "playbooks/epics/default-epic.md"
+    path: "modes/epics/default-epic.md"
     status: active
+    requires_brief: true
     folder: epics
     lifecycle_stage: PLANNING
     handoff_accepts: [default-prd, default-brief]
@@ -120,7 +189,7 @@ modes:
     review_modes: [guided, express, auto, review]
     default_review_mode: guided
     rating_methods: [rice, wiegers, moscow]
-    supports_upload: [prior_playbook, rating_table]
+    supports_upload: [prior_artefact, rating_table]
 
   # ---------------------------------------------------------------------------
   # FEATURES — Concrete capabilities with functional spec
@@ -135,8 +204,9 @@ modes:
       - "feature"
       - "feature spec"
       - "default feature"
-    path: "playbooks/features/default-feature.md"
+    path: "modes/features/default-feature.md"
     status: active
+    requires_brief: true
     folder: features
     lifecycle_stage: PLANNING
     handoff_accepts: [default-prd, default-brief]
@@ -144,7 +214,7 @@ modes:
     review_modes: [guided, express, auto, review]
     default_review_mode: guided
     rating_methods: [rice, wiegers]
-    supports_upload: [prior_playbook, rating_table]
+    supports_upload: [prior_artefact, rating_table]
 
   # ---------------------------------------------------------------------------
   # STORIES — User stories and tech stories
@@ -159,7 +229,7 @@ modes:
       - "user story"
       - "story"
       - "default user story"
-    path: "playbooks/stories/default-user-story.md"
+    path: "modes/stories/default-user-story.md"
     status: coming_soon
     folder: stories
     lifecycle_stage: IN_PROGRESS
@@ -168,7 +238,7 @@ modes:
     review_modes: [guided, express, auto, review]
     default_review_mode: guided
     rating_methods: [rice]
-    supports_upload: [prior_playbook, rating_table]
+    supports_upload: [prior_artefact, rating_table]
 
   - id: default-tech-story
     menu_number: 6
@@ -180,7 +250,7 @@ modes:
       - "technical story"
       - "enabler"
       - "default tech story"
-    path: "playbooks/stories/default-tech-story.md"
+    path: "modes/stories/default-tech-story.md"
     status: coming_soon
     folder: stories
     lifecycle_stage: IN_PROGRESS
@@ -189,7 +259,7 @@ modes:
     review_modes: [guided, express, auto, review]
     default_review_mode: guided
     rating_methods: [rice]
-    supports_upload: [prior_playbook, rating_table]
+    supports_upload: [prior_artefact, rating_table]
 
   # ---------------------------------------------------------------------------
   # RELEASE NOTES & WHITE-PAPERS
@@ -204,7 +274,7 @@ modes:
       - "release note"
       - "release"
       - "default release note"
-    path: "playbooks/briefs/default-release-note.md"
+    path: "modes/briefs/default-release-note.md"
     status: coming_soon
     folder: briefs
     lifecycle_stage: REVIEW
@@ -213,19 +283,19 @@ modes:
     review_modes: [guided, express, auto, review]
     default_review_mode: guided
     rating_methods: []
-    supports_upload: [prior_playbook]
+    supports_upload: [prior_artefact]
 
   - id: default-white-paper
     menu_number: 8
     label: "White-paper"
-    description: "A strategic or technical position document assembled from completed playbooks"
+    description: "A strategic or technical position document assembled from completed artefacts"
     triggers:
       - "8"
       - "white-paper"
       - "whitepaper"
       - "position paper"
       - "default white paper"
-    path: "playbooks/briefs/default-white-paper.md"
+    path: "modes/briefs/default-white-paper.md"
     status: coming_soon
     folder: briefs
     lifecycle_stage: COMPLETED
@@ -234,7 +304,7 @@ modes:
     review_modes: [guided, express, auto, review]
     default_review_mode: guided
     rating_methods: []
-    supports_upload: [prior_playbook]
+    supports_upload: [prior_artefact]
 
   # ---------------------------------------------------------------------------
   # INVESTIGATIONS
@@ -250,7 +320,7 @@ modes:
       - "spike"
       - "discovery"
       - "default investigation"
-    path: "playbooks/investigations/default-investigation.md"
+    path: "modes/investigations/default-investigation.md"
     status: coming_soon
     folder: investigations
     lifecycle_stage: IDEATION
@@ -259,4 +329,30 @@ modes:
     review_modes: [guided, express, auto, review]
     default_review_mode: guided
     rating_methods: [wiegers]
-    supports_upload: [prior_playbook, rating_table]
+    supports_upload: [prior_artefact, rating_table]
+
+  # ---------------------------------------------------------------------------
+  # SPECS — System Specifications (IEEE SRS-style) for Data/ML systems
+  # ---------------------------------------------------------------------------
+
+  - id: default-spec
+    menu_number: 10
+    label: "Spec"
+    description: "An IEEE SRS-style specification for a Data/ML system — product context, interfaces, features, NFRs, and quality gate"
+    triggers:
+      - "10"
+      - "spec"
+      - "specs"
+      - "default spec"
+      - "default specs"
+    path: "modes/specs/default-spec.md"
+    status: active
+    requires_brief: true
+    folder: specs
+    lifecycle_stage: PLANNING
+    handoff_accepts: [default-brief, default-prd]
+    handoff_produces: [default-epic, default-feature]
+    review_modes: [guided, express, auto, review]
+    default_review_mode: guided
+    rating_methods: [ssqs]
+    supports_upload: [prior_artefact]
