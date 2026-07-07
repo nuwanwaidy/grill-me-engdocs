@@ -1,0 +1,58 @@
+# =============================================================================
+# .github/workflows/publish-skill.yml
+# Builds and commits the skill zip on every push to main that touches
+# runtime files. The committed zip at dist/grill-me-engdocs.zip is the
+# stable manual download URL until the Anthropic Skills API is available.
+#
+# Stable download URL:
+#   https://github.com/nuwanwaidya/grill-me-engdocs/raw/main/dist/grill-me-engdocs.zip
+#
+# When the Skills API ships:
+#   1. Add ANTHROPIC_API_KEY to repo secrets
+#   2. Uncomment the "Publish to Claude Skills" step below
+#   3. The commit-back step can then be removed if preferred
+# =============================================================================
+
+name: Build and publish skill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'SKILL.md'
+      - 'config.yml'
+      - 'modes/**'
+      - '_context/**'
+      - 'surveys/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build skill zip
+        run: make skill
+
+      - name: Commit zip back to main
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dist/grill-me-engdocs.zip
+          git diff --cached --quiet || git commit -m "build: update skill zip [skip ci]"
+          git push
+
+      # -----------------------------------------------------------------------
+      # Uncomment when Anthropic Skills API is available:
+      # -----------------------------------------------------------------------
+      # - name: Publish to Claude Skills
+      #   env:
+      #     ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      #   run: |
+      #     curl -X POST https://api.anthropic.com/v1/skills \
+      #       -H "x-api-key: $ANTHROPIC_API_KEY" \
+      #       -F "file=@dist/grill-me-engdocs.zip"
