@@ -6,36 +6,44 @@
 #   make skill-clean    Remove the build artefact
 #
 # The skill zip contains only what Claude needs at runtime.
-# docs/, tests/, .git/ are excluded — dev-only content.
-# surveys/ IS included — rating-template.xlsx is used by Claude at runtime.
-#
-# Output: dist/grill-me-engdocs.zip
-# Stable download URL (once committed to main):
-#   https://github.com/nuwanwaidya/grill-me-engdocs/raw/main/dist/grill-me-engdocs.zip
+# docs/, tests/, .git/, and surveys/ are excluded — dev-only content.
 # =============================================================================
 
 SKILL_NAME  := grill-me-engdocs
 OUTPUT_DIR  := dist
 SKILL_ZIP   := $(OUTPUT_DIR)/$(SKILL_NAME).zip
 
+# Files and folders included in the skill zip
+SKILL_INCLUDES := \
+	SKILL.md \
+	config.yml \
+	_context/ \
+	modes/
+
+# Files and folders excluded (dev-only — not needed by Claude at runtime)
+SKILL_EXCLUDES := \
+	docs/ \
+	tests/ \
+	surveys/ \
+	dist/ \
+	.git/ \
+	.gitignore \
+	Makefile \
+	README.md
+
 .PHONY: skill skill-clean
 
 skill:
 	@mkdir -p $(OUTPUT_DIR)
 	@rm -f $(SKILL_ZIP)
-	@zip -r $(SKILL_ZIP) \
-		SKILL.md \
-		config.yml \
-		_context/ \
-		modes/ \
-		surveys/ \
+	@zip -r $(SKILL_ZIP) $(SKILL_INCLUDES) \
+		$(foreach excl,$(SKILL_EXCLUDES),--exclude "$(excl)*") \
 		--exclude "*.gitkeep" \
-		--exclude "*/.DS_Store" \
-		--exclude "__MACOSX/*"
+		--exclude "*/.DS_Store"
 	@echo ""
 	@echo "Built: $(SKILL_ZIP)"
 	@echo "Contents:"
-	@unzip -l $(SKILL_ZIP) | awk '{print $$NF}' | grep "\S" | sort
+	@unzip -l $(SKILL_ZIP) | grep -v "^Archive" | grep -v "^\-\-" | awk '{print $$NF}' | sort
 
 skill-clean:
 	@rm -f $(SKILL_ZIP)

@@ -1,4 +1,4 @@
-# Grill Mode: System Specification (SysSpec)
+# Grill Mode: System Specifications (Spec)
 
 ## Before you begin — load and actively use org context
 
@@ -47,16 +47,16 @@ are pre-populated: [list]. I'll only grill on what's missing or needs elaboratio
 - Reference TrustX trust contract clauses for security/governance NFRs
 - Confirm GCP budget envelope if relevant ($50K/month ceiling)
 
-**During S-Anchor 1 (SSQS — SysSpec Quality Score):**
+**During S-Anchor 1 (SSQS — Spec Quality Score):**
 - Score all four dimensions explicitly on 1–5 before finalising
 - Define each scale inline before asking
 - Gate: SSQS composite ≥ 3.5, all dimensions ≥ 3
 
 ---
 
-## What is a SysSpec?
+## What is a Spec?
 
-A System Specification (SysSpec) is an IEEE SRS-style document that defines
+A Spec is an IEEE SRS-style system specification document that defines
 what a system must do and the constraints under which it must operate —
 precisely enough for engineers to build it and testers to verify it.
 
@@ -70,10 +70,10 @@ Use this mode when:
 
 **Lifecycle position:**
 ```
-Brief → PRD → [SysSpec] → Epic → Feature → Stories → Release Note
+Brief → PRD → [Spec] → Epic → Feature → Stories → Release Note
 ```
 
-A SysSpec is NOT:
+A Spec is NOT:
 - A design document (it says what, not how)
 - A user-facing PRD (it addresses system behaviour, not product value)
 - A Brief (it assumes the initiative is already approved)
@@ -254,7 +254,7 @@ envelope confirmed.
 
 ---
 
-## S-Anchor 1 — SysSpec Quality Score (SSQS)
+## S-Anchor 1 — Spec Quality Score (SSQS)
 
 This is the specification quality gate. It replaces Wiegers and RICE — which
 measure initiative value. SSQS measures document quality: is this specification
@@ -288,7 +288,7 @@ Once all anchors are strong and SSQS gate passes, say:
 
 ---
 
-# SysSpec: [System Name]
+# Spec: [System Name]
 
 ## Revision History
 
@@ -459,7 +459,7 @@ High-level system diagram as a bullet list: named components and directional arr
 | Term / Abbreviation | Description |
 |---|---|
 | [term] | [definition — use governance-canonical terms; never invent] |
-| SSQS | SysSpec Quality Score — ISO/IEC/IEEE 29148-derived composite score (Completeness · Verifiability · Traceability · Consistency) |
+| SSQS | Spec Quality Score — ISO/IEC/IEEE 29148-derived composite score (Completeness · Verifiability · Traceability · Consistency) |
 
 ---
 
@@ -475,7 +475,7 @@ High-level system diagram as a bullet list: named components and directional arr
 
 ## SIEM Policy Reference (F5)
 
-Every SysSpec output must cite at least one applicable SIEM policy term.
+Every Spec output must cite at least one applicable SIEM policy term.
 Reference from `canonical/siem/`:
 
 | Term ID | Name | Why applicable |
@@ -488,7 +488,7 @@ Reference from `canonical/siem/`:
 
 | Field | Value |
 |---|---|
-| Artefact | SysSpec |
+| Artefact | Spec |
 | Title | [system name] |
 | Initiative | [initiative name — from parent Brief/PRD if uploaded] |
 | Value Stream | [CustomerX / OperX / TrustX] |
