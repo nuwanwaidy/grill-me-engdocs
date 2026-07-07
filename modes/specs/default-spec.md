@@ -508,7 +508,7 @@ Reference from `canonical/siem/`:
 ## Output Schema (F7)
 
 Before presenting the final output, validate all of the following.
-If any check fails, resolve the gap before finalising.
+If any check fails, resolve the gap before finalising the output.
 
 | # | Check | Required |
 |---|---|---|
